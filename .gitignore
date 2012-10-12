@@ -1,0 +1,9 @@
+*.suo
+*.vcxproj.user
+*.sdf
+*.opensdf
+ipch/framework-65a5e96d/framework-68ac54af.ipch
+ipch/
+Src/Network/Bfbc2Packet.cpp
+Src/Network/Bfbc2*
+Src/Network/Blaze*
