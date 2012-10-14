@@ -239,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="Src\File\File.cpp" />
     <ClCompile Include="Src\File\FileIni.cpp" />
+    <ClCompile Include="Src\Game\MassiveMessageManager.cpp" />
+    <ClCompile Include="Src\Game\NetProperties.cpp" />
+    <ClCompile Include="Src\Game\Player.cpp" />
     <ClCompile Include="Src\Network\BlazePacket.cpp" />
     <ClCompile Include="Src\Network\HttpClient.cpp" />
     <ClCompile Include="Src\Network\HttpServer\Connection.cpp" />
@@ -279,6 +282,10 @@
     <ClInclude Include="Src\DataBase\sqlwrap.h" />
     <ClInclude Include="Src\File\File.h" />
     <ClInclude Include="Src\File\FileIni.h" />
+    <ClInclude Include="Src\Game\GOMServer.hpp" />
+    <ClInclude Include="Src\Game\MassiveMessageManager.hpp" />
+    <ClInclude Include="Src\Game\NetProperties.hpp" />
+    <ClInclude Include="Src\Game\Player.hpp" />
     <ClInclude Include="Src\Network\Bfbc2Packet.h" />
     <ClInclude Include="Src\Network\Bfbc2Strategy.h" />
     <ClInclude Include="Src\Network\BlazePacket.h" />

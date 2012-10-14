@@ -33,6 +33,7 @@ namespace Framework
 					data = mCipher->Decrypt(data);
 
 				mReceivingPacket.InitializeHeader(data);
+
 				return mReceivingPacket.Size - 6;
 			}
 
@@ -60,22 +61,27 @@ namespace Framework
 					mReceivingPacket.Initialize(pData);
 				}
 
-				boost::mutex::scoped_lock locker(mLock);
-				mPackets.push_back(mReceivingPacket);
+				ReceivePacket(mReceivingPacket);
 
 				return true;
+			}
+
+			void ReceivePacket(Framework::Network::Packet& pPacket)
+			{
+				boost::mutex::scoped_lock locker(mLock);
+				mPackets.push_back(pPacket);
 			}
 
 			std::string Serialize(Framework::Network::Packet& pData)
 			{
 				std::string outboundData;
-				if(pData.Type == 4)
+				if(pData.Type == Framework::Network::Packet::kHandshake)
 				{
 					std::string rsaData = Crypt::RSA::Encrypt(pData.GetBuffer());
 					pData.Size = 14 + rsaData.size();
 					outboundData = pData.GetHeader() + rsaData;
 				}
-				else if(mCipher && pData.Type != 4)
+				else if(mCipher && pData.Type != Framework::Network::Packet::kHandshake)
 				{
 					std::string data = pData.GetHeader().substr(6) + pData.GetBuffer();
 

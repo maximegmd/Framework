@@ -10,8 +10,8 @@ namespace Framework
 		{
 		}
 		//---------------------------------------------------------------------
-		Packet::Packet(uint32_t pOpcode, uint32_t pObjectId, uint8_t pType)
-			:Opcode(pOpcode), ObjectId(pObjectId), Type(pType)
+		Packet::Packet(uint32_t pOpcode, uint8_t pType)
+			:Opcode(pOpcode), ObjectId(0), Type(pType)
 		{
 		}
 		//---------------------------------------------------------------------

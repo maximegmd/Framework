@@ -23,6 +23,11 @@ namespace Framework
 		{
 		public:
 
+			enum{
+				kHandshake,
+				kMessage
+			};
+
 			Packet();
 			/**
 			 * Construct a packet.
@@ -30,7 +35,7 @@ namespace Framework
 			 * @param pObjectId The object's id.
 			 * @param pType The packet's type (ping, handshake or packet).
 			 */
-			Packet(uint32_t pOpcode, uint32_t pObjectId, uint8_t pType = 0x00);
+			Packet(uint32_t pOpcode, uint8_t pType = kMessage);
 			Packet(Packet&& pPacket);
 			
 			Packet& operator=(Packet&& pPacket);
