@@ -239,10 +239,11 @@
     </ClCompile>
     <ClCompile Include="Src\File\File.cpp" />
     <ClCompile Include="Src\File\FileIni.cpp" />
-    <ClCompile Include="Src\Game\Accessors.cpp" />
+    <ClCompile Include="Src\Game\GOMEntry.cpp" />
     <ClCompile Include="Src\Game\GameServer.cpp" />
     <ClCompile Include="Src\Game\GOMServer.cpp" />
     <ClCompile Include="Src\Game\GOMObjects.cpp" />
+    <ClCompile Include="Src\Game\GOMVariable.cpp" />
     <ClCompile Include="Src\Game\MassiveMessageManager.cpp" />
     <ClCompile Include="Src\Game\NetProperties.cpp" />
     <ClCompile Include="Src\Game\Player.cpp" />
@@ -287,10 +288,11 @@
     <ClInclude Include="Src\DataBase\sqlwrap.h" />
     <ClInclude Include="Src\File\File.h" />
     <ClInclude Include="Src\File\FileIni.h" />
-    <ClInclude Include="Src\Game\Accessors.hpp" />
+    <ClInclude Include="Src\Game\GOMEntry.hpp" />
     <ClInclude Include="Src\Game\GameServer.hpp" />
     <ClInclude Include="Src\Game\GOMServer.hpp" />
     <ClInclude Include="Src\Game\GOMObjects.hpp" />
+    <ClInclude Include="Src\Game\GOMVariable.hpp" />
     <ClInclude Include="Src\Game\MassiveMessageManager.hpp" />
     <ClInclude Include="Src\Game\NetProperties.hpp" />
     <ClInclude Include="Src\Game\Player.hpp" />

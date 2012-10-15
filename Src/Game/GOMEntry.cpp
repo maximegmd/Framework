@@ -1,8 +1,8 @@
-#include "Accessors.hpp"
+#include "GOMEntry.hpp"
 
 namespace Game
 {
-	void IAccessor::SetDirty(bool dirty){
+	void IGOMEntry::SetDirty(bool dirty){
 		if(dirty){
 			flags |= kDirty;
 			Synchronize();
@@ -10,7 +10,7 @@ namespace Game
 		else flags &= ~kDirty;
 	}
 
-	bool IAccessor::IsDirty(){
+	bool IGOMEntry::IsDirty(){
 		return flags & kDirty;
 	}
 }

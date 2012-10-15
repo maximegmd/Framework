@@ -5,7 +5,7 @@
 
 namespace Game
 {
-	class IAccessor
+	class IGOMEntry
 	{
 	public:
 
@@ -34,11 +34,11 @@ namespace Game
 	};
 
 	template <class Model>
-	class Accessor : public IAccessor
+	class GOMEntry : public IGOMEntry
 	{
 	public:
 
-		Accessor(Model* m) 
+		GOMEntry(Model* m) 
 			: model(m)
 		{
 		}
@@ -48,34 +48,5 @@ namespace Game
 		Model* model;
 	};
 
-	template <class T>
-	struct VarAccessor
-	{
-		typedef typename T type;
-		typedef std::function<const type&()>		Getter;
 
-		VarAccessor(Getter g)
-			:getter(g)
-		{
-			a = getter();
-		}
-
-		void operator()(IAccessor* me){
-			if(a != getter())
-				me->SetDirty(true);
-		}
-
-		void operator()(){
-			a = getter();
-		}
-
-		T get() const{
-			return getter();
-		}
-
-	private:
-
-		Getter getter;
-		T a;
-	};
 }

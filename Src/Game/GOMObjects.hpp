@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Accessors.hpp"
+#include "GOMEntry.hpp"
 #include <cstdint>
 #include <list>
 
@@ -11,10 +11,10 @@ namespace Game
 	struct GOMState
 	{
 		GOMState();
-		GOMState(int32_t a, int32_t b, IAccessor* c);
+		GOMState(int32_t a, int32_t b, IGOMEntry* c);
 
 		int32_t id, state;
-		IAccessor* accessor;	
+		IGOMEntry* accessor;	
 
 		friend Framework::Network::Packet& operator<<(Framework::Network::Packet& pPacket, const GOMState& state);
 	};
@@ -29,7 +29,7 @@ namespace Game
 
 	struct GOMVisitor
 	{
-		void operator()(int32_t id, int32_t state, IAccessor* accessor);
+		void operator()(int32_t id, int32_t state, IGOMEntry* accessor);
 
 		std::list<GOMState> accessors;
 	};

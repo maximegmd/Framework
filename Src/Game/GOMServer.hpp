@@ -18,7 +18,7 @@ namespace Game
 		virtual void UpdateEntry(int32_t id, int32_t state, const std::string& serializedData) = 0;
 	};
 
-	template <class Model, class Acc = Accessor<Model> >
+	template <class Model, class Acc = GOMEntry<Model> >
 	class GOMServer : public IGOMServer
 	{
 	public:

@@ -7,7 +7,7 @@ namespace Game
 	{
 	}
 
-	GOMState::GOMState(int32_t a, int32_t b, IAccessor* c)
+	GOMState::GOMState(int32_t a, int32_t b, IGOMEntry* c)
 		:id(a), state(b), accessor(c)
 	{
 	}
@@ -24,7 +24,7 @@ namespace Game
 		return packet;
 	}
 
-	void GOMVisitor::operator()(int32_t id, int32_t state, IAccessor* accessor)
+	void GOMVisitor::operator()(int32_t id, int32_t state, IGOMEntry* accessor)
 	{
 		accessors.push_back(GOMState(id, state, accessor));
 	}
