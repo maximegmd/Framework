@@ -49,12 +49,12 @@ namespace Game
 	};
 
 	template <class T>
-	struct Verifier
+	struct VarAccessor
 	{
 		typedef typename T type;
 		typedef std::function<const type&()>		Getter;
 
-		Verifier(Getter g)
+		VarAccessor(Getter g)
 			:getter(g)
 		{
 			a = getter();
