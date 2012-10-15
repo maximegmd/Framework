@@ -28,7 +28,7 @@ namespace Game
 			a = getter();
 		}
 
-		T get() const{
+		const T& get() const{
 			return getter();
 		}
 
