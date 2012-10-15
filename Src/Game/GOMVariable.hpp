@@ -24,6 +24,10 @@ namespace Game
 				me->SetDirty(true);
 		}
 
+		operator bool() const{
+			return (a == getter());
+		}
+
 		void operator()(){
 			a = getter();
 		}

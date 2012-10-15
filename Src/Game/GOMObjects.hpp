@@ -24,6 +24,7 @@ namespace Game
 
 		int32_t id, state;
 		IGOMEntry* gomEntry;	
+		bool full;
 
 		friend Framework::Network::Packet& operator<<(Framework::Network::Packet& pPacket, const GOMState& state);
 	};

@@ -31,9 +31,10 @@ namespace Game
 
 		/**
 		 * @brief Serializes the GOM Entry's state.
+		 * @param pFull Returns whether or not the serialization should be complete.
 		 * @return The raw serialized data.
 		 */
-		virtual std::string Serialize() const = 0;
+		virtual std::string Serialize(bool pFull) const = 0;
 		/**
 		 * @brief Deserializes the GOM Entry's state.
 		 * @param plainData The serialized raw data.
@@ -41,7 +42,7 @@ namespace Game
 		virtual void Deserialize(const std::string& plainData) = 0;
 
 		/**
-		 * @brief Sets wether or not the GOM Entry is dirty.
+		 * @brief Sets whether or not the GOM Entry is dirty.
 		 * @param dirty The dirtiness of the GOM Entry.
 		 */
 		void SetDirty(bool dirty);

@@ -3,18 +3,18 @@
 namespace Game
 {
 	GOMState::GOMState()
-		:id(-1), state(0), gomEntry(nullptr)
+		:id(-1), state(0), gomEntry(nullptr), full(false)
 	{
 	}
 
 	GOMState::GOMState(int32_t a, int32_t b, IGOMEntry* c)
-		:id(a), state(b), gomEntry(c)
+		:id(a), state(b), gomEntry(c), full(false)
 	{
 	}
 
 	Framework::Network::Packet& operator<<(Framework::Network::Packet& packet, const GOMState& state)
 	{
-		packet << state.id << state.state << state.gomEntry->Serialize();
+		packet << state.id << state.state << state.gomEntry->Serialize(state.full);
 		return packet;
 	}
 
