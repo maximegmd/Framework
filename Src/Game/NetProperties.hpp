@@ -4,7 +4,8 @@
 
 namespace Game
 {
-	class ReplicationStateProperty {
+	class ReplicationStateProperty 
+	{
 	public:
 
 		enum State{
@@ -18,6 +19,10 @@ namespace Game
 		ReplicationStateProperty(const State& state);
 		~ReplicationStateProperty();
 
+		/**
+		 * @brief Get the replication level.
+		 * @return The replication level.
+		 */
 		int32_t GetState() const
 		{
 			return theState;	

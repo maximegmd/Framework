@@ -10,11 +10,20 @@ namespace Game
 {
 	struct GOMState
 	{
+		/**
+		 * @brief Constructor.
+		 */
 		GOMState();
-		GOMState(int32_t a, int32_t b, IGOMEntry* c);
+		/**
+		 * @brief Constructor.
+		 * @param id The id of the GOM Entry in the GOM Server.
+		 * @param state The state of the GOM Entry in the GOM Server.
+		 * @param gomEntry The GOM Entry.
+		 */
+		GOMState(int32_t id, int32_t state, IGOMEntry* gomEntry);
 
 		int32_t id, state;
-		IGOMEntry* accessor;	
+		IGOMEntry* gomEntry;	
 
 		friend Framework::Network::Packet& operator<<(Framework::Network::Packet& pPacket, const GOMState& state);
 	};
@@ -29,8 +38,15 @@ namespace Game
 
 	struct GOMVisitor
 	{
-		void operator()(int32_t id, int32_t state, IGOMEntry* accessor);
+		/**
+		 * @brief Visits a GOM Server.
+		 * @param id The id of the GOM Entry in the GOM Server.
+		 * @param state The state of the GOM Entry in the GOM Server.
+		 * @param gomEntry The GOM Entry.
+		 * @return
+		 */
+		void operator()(int32_t id, int32_t state, IGOMEntry* gomEntry);
 
-		std::list<GOMState> accessors;
+		std::list<GOMState> gomEntries;
 	};
 }

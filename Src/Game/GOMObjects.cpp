@@ -3,18 +3,18 @@
 namespace Game
 {
 	GOMState::GOMState()
-		:id(-1), state(0), accessor(nullptr)
+		:id(-1), state(0), gomEntry(nullptr)
 	{
 	}
 
 	GOMState::GOMState(int32_t a, int32_t b, IGOMEntry* c)
-		:id(a), state(b), accessor(c)
+		:id(a), state(b), gomEntry(c)
 	{
 	}
 
 	Framework::Network::Packet& operator<<(Framework::Network::Packet& packet, const GOMState& state)
 	{
-		packet << state.id << state.state << state.accessor->Serialize();
+		packet << state.id << state.state << state.gomEntry->Serialize();
 		return packet;
 	}
 
@@ -26,6 +26,6 @@ namespace Game
 
 	void GOMVisitor::operator()(int32_t id, int32_t state, IGOMEntry* accessor)
 	{
-		accessors.push_back(GOMState(id, state, accessor));
+		gomEntries.push_back(GOMState(id, state, accessor));
 	}
 }

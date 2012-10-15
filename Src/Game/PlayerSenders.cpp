@@ -9,7 +9,7 @@ namespace Game
 		GOMVisitor visitor;
 		gomServer.VisitAll(visitor);
 
-		packet << visitor.accessors;
+		packet << visitor.gomEntries;
 
 		Write(packet);
 	}
