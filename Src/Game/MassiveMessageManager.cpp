@@ -9,24 +9,16 @@ Game::MassiveMessageManager* TheMassiveMessageMgr = ::new Game::MassiveMessageMa
 
 namespace Game
 {
-
 	MassiveMessageManager::MassiveMessageManager() :
 		host(false), 
 		ioServicePool(1),
-		server(nullptr)
+		gameServer(nullptr)
 	{
 		
 	}
 
 	MassiveMessageManager::~MassiveMessageManager()
 	{
-		if(server)
-			server->Stop();
-		
-		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
-			delete itor->second;
-
-		players.clear();
 		localPlayer.reset(nullptr);
 	}
 
@@ -40,19 +32,19 @@ namespace Game
 		address = pAddress;
 	}
 
-	void MassiveMessageManager::SetPlayerConstructor(PlayerConstructor& ctor)
+	void MassiveMessageManager::SetPlayerConstructor(GameServer::PlayerConstructor& ctor)
 	{
-		playerContructor = ctor;
+		playerConstructor = ctor;
 	}
 
-	void MassiveMessageManager::SetGOMServerConstructor(GOMServerConstructor& ctor)
+	void MassiveMessageManager::SetGOMServerConstructor(GameServer::GOMServerConstructor& ctor)
 	{
-		gomServerConstructor = ctor;
+		gomConstructor = ctor;
 	}
 
 	void MassiveMessageManager::BeginMultiplayer(bool pHost)
 	{
-		if(!gomServerConstructor)
+		if(!gomConstructor)
 		{
 			throw std::runtime_error("No GOM Server constructor set.");
 		}
@@ -60,18 +52,15 @@ namespace Game
 		host = pHost;
 		//if(host)
 		{
-			server.reset(new Framework::Network::Server(port));
-			server->OnConnection.connect(boost::bind(&MassiveMessageManager::OnConnection, this, _1));
-			server->Start();
+			gameServer.reset(new GameServer(port, playerConstructor, gomConstructor));
 		}
 		//else
 		{
 			ioServicePool.Run();
 			connection.reset(::new Framework::Network::TcpConnection(ioServicePool.GetIoService()));
 			Connect(address, std::to_string((long long)port));
+			gomServer.reset(gomConstructor(nullptr));
 		}
-
-		gomServer.reset(gomServerConstructor(nullptr));
 	}
 
 	void MassiveMessageManager::Connect(const std::string& pAddress, const std::string& pPort)
@@ -80,12 +69,10 @@ namespace Game
 		connection->Connect(pAddress,pPort);
 	}
 
-	void MassiveMessageManager::Query()
+	void MassiveMessageManager::Update()
 	{
-		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
-		{
-			itor->second->Update();
-		}
+		if(gameServer)
+			gameServer->Update();
 
 		if(localPlayer)
 			localPlayer->Update();
@@ -98,25 +85,11 @@ namespace Game
 		return localPlayer.get();
 	}
 
-	void MassiveMessageManager::OnConnection(Framework::Network::TcpConnection::pointer pConnection)
-	{
-		Player::KeyType key;
-		std::random_device rd;
-		do{
-			key = rd() + 1;
-		}while(players.find(key) != players.end());
-
-		Player* player = playerContructor ? playerContructor(key, nullptr) : new Player(key);
-		player->SetConnection(pConnection);
-
-		players[key] = player;
-	}
-
 	void MassiveMessageManager::OnConnect(bool pConnected)
 	{
 		if(pConnected)
 		{
-			Player* player = playerContructor ? playerContructor(kPlayerSelf, nullptr) : new Player(kPlayerSelf);
+			Player* player = playerConstructor ? playerConstructor(kPlayerSelf, nullptr) : new Player(kPlayerSelf);
 			localPlayer.reset(player);
 			localPlayer->SetConnection(connection);
 
@@ -155,10 +128,8 @@ namespace Game
 		}
 		if(pKey == kPlayerAll)
 		{
-			for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
-			{
-				itor->second->Write(pPacket);
-			}
+			if(gameServer)
+				gameServer->SendMessageAll(pPacket);
 			if(localPlayer)
 				localPlayer->Write(pPacket);
 		}

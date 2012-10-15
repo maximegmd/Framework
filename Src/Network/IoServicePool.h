@@ -2,7 +2,6 @@
 
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
-#include <boost/timer.hpp>
 #include <cstdint>
 
 namespace Framework
@@ -27,7 +26,6 @@ namespace Framework
 			typedef boost::shared_ptr<boost::asio::io_service::work> work_ptr;
 
 			std::vector<io_service_ptr> mIoServices;
-			std::vector<work_ptr> mWork;
 			std::vector<boost::shared_ptr<boost::thread> > mThreads;
 
 			// Using std::atomic <bool> here (or boost equivalent) would be preferable

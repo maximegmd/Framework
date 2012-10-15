@@ -1,10 +1,12 @@
 #include "Player.hpp"
+#include <Game/GameServer.hpp>
+
 #include <System/Log.h>
 
 namespace Game
 {
-	Player::Player(Player::KeyType key)
-		: key(key)
+	Player::Player(Player::KeyType key, GameServer* server)
+		: key(key), gameServer(server)
 	{
 
 	}
@@ -93,6 +95,7 @@ namespace Game
 		SetCipher(new Framework::Crypt::Cipher(salsaEnc, salsaDec, salsaEncIV, salsaDecIV));
 
 		Synchronize();
+		SendReplicationTransaction(gameServer->GetGOMServer());
 	}
 
 	void Player::HandleSynchronize(Framework::Network::Packet& pPacket)

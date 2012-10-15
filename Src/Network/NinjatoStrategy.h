@@ -6,7 +6,6 @@
 #include <Network/Packet.h>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
-#include <boost/timer.hpp>
 #include <cstdint>
 
 

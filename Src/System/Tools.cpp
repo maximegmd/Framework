@@ -106,7 +106,7 @@ namespace Framework
 			std::string output;
 
 			std::normal_distribution<long double> distribution;
-			std::mt19937 engine(time(0));
+			std::mt19937 engine(time(0) + rand());
 
 			while(output.size() < pSize)
 			{

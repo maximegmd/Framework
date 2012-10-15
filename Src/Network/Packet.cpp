@@ -59,6 +59,30 @@ namespace Framework
 			return *this;
 		}
 		//---------------------------------------------------------------------
+		Packet& Packet::operator<<(const int8_t& pData)
+		{
+			mBuffer.append((char*)&pData, 1);
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator<<(const int16_t& pData)
+		{
+			mBuffer.append((char*)&pData, 2);
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator<<(const int32_t& pData)
+		{
+			mBuffer.append((char*)&pData, 4);
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator<<(const int64_t& pData)
+		{
+			mBuffer.append((char*)&pData, 8);
+			return *this;
+		}
+		//---------------------------------------------------------------------
 		Packet& Packet::operator<<(const float& pData)
 		{
 			mBuffer.append((char*)&pData, 4);
@@ -132,6 +156,54 @@ namespace Framework
 				return *this;
 			}
 			pData = *(uint64_t*)&mBuffer[0];
+			mBuffer.erase(0,8);
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator>>(int8_t& pData)
+		{
+			if(mBuffer.size() < 1)
+			{
+				pData = 0;
+				return *this;
+			}
+			pData = *(int8_t*)&mBuffer[0];
+			mBuffer.erase(0,1);
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator>>(int16_t& pData)
+		{
+			if(mBuffer.size() < 2)
+			{
+				pData = 0;
+				return *this;
+			}
+			pData = *(int16_t*)&mBuffer[0];
+			mBuffer.erase(0,2);
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator>>(int32_t& pData)
+		{
+			if(mBuffer.size() < 4)
+			{
+				pData = 0;
+				return *this;
+			}
+			pData = *(int32_t*)&mBuffer[0];
+			mBuffer.erase(0,4);
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator>>(int64_t& pData)
+		{
+			if(mBuffer.size() < 8)
+			{
+				pData = 0;
+				return *this;
+			}
+			pData = *(int64_t*)&mBuffer[0];
 			mBuffer.erase(0,8);
 			return *this;
 		}

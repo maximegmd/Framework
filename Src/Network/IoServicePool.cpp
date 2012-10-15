@@ -1,6 +1,7 @@
 #include <Network/IoServicePool.h>
 #include <System/Log.h>
 #include <boost/asio.hpp>
+#include <boost/timer.hpp>
 
 using boost::asio::ip::tcp;
 
@@ -18,9 +19,7 @@ namespace Framework
 			for (std::size_t i = 0; i < pool_size; ++i)
 			{
 				io_service_ptr io_service(new boost::asio::io_service);
-				work_ptr work(new boost::asio::io_service::work(*io_service));
 				mIoServices.push_back(io_service);
-				mWork.push_back(work);
 				mRunning.push_back(false);
 			}
 		}
@@ -56,7 +55,6 @@ namespace Framework
 					}
 
 				})));
-				//mThreads.push_back(boost::shared_ptr<boost::thread>(new boost::thread(boost::bind(&boost::asio::io_service::run, mIoServices[i]))));
 			}
 		}
 		//---------------------------------------------------------------------
@@ -72,7 +70,6 @@ namespace Framework
 				mThreads[i]->join();
 
 			mThreads.clear();
-			mWork.clear();
 			mIoServices.clear();
 		}
 		//---------------------------------------------------------------------

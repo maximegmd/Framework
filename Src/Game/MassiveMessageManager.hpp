@@ -3,6 +3,7 @@
 #include <Game/Player.hpp>
 #include <Game/NetProperties.hpp>
 #include <Game/GOMServer.hpp>
+#include <Game/GameServer.hpp>
 #include <Network/Server.h>
 #include <Network/IoServicePool.h>
 
@@ -12,15 +13,6 @@ namespace Game
 	{
 	public:
 
-		enum{
-			kPlayerSelf = -3,
-			kPlayerServer = -2,
-			kPlayerAll = -1,
-		};
-
-		typedef std::function<Player* (Player::KeyType, void*)> PlayerConstructor;
-		typedef std::function<IGOMServer* (void*)>				GOMServerConstructor;
-
 		MassiveMessageManager();
 		~MassiveMessageManager();
 
@@ -29,14 +21,12 @@ namespace Game
 		void SetPort(uint16_t);
 		void SetAddress(const std::string&);
 
-		void SetPlayerConstructor(PlayerConstructor& ctor);
-		void SetGOMServerConstructor(GOMServerConstructor& ctor);
+		void SetPlayerConstructor(GameServer::PlayerConstructor& ctor);
+		void SetGOMServerConstructor(GameServer::GOMServerConstructor& ctor);
 
 		void Connect(const std::string& pAddress, const std::string& pPort);
 
-		void Query();
-
-		void OnConnection(Framework::Network::TcpConnection::pointer pConnection);
+		void Update();
 
 		Game::Player* GetLocalPlayer();
 
@@ -49,10 +39,10 @@ namespace Game
 
 		void OnConnect(bool pConnected);
 
-		PlayerConstructor		playerContructor;
-		GOMServerConstructor	gomServerConstructor;
+		
+		GameServer::PlayerConstructor playerConstructor;
+		GameServer::GOMServerConstructor gomConstructor;
 
-		std::map<Player::KeyType, Player*> players;
 		std::unique_ptr<Player> localPlayer;
 
 		std::unique_ptr<IGOMServer>							gomServer;
@@ -62,7 +52,7 @@ namespace Game
 		std::string address;
 
 		//! Server side
-		std::unique_ptr<Framework::Network::Server>			server;
+		std::unique_ptr<GameServer>	gameServer;
 
 		//! Client side
 		Framework::Network::IoServicePool ioServicePool;

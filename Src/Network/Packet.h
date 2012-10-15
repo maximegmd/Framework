@@ -44,6 +44,10 @@ namespace Framework
 			Packet& operator<<(const uint16_t& pData);
 			Packet& operator<<(const uint32_t& pData);
 			Packet& operator<<(const uint64_t& pData);
+			Packet& operator<<(const int8_t& pData);
+			Packet& operator<<(const int16_t& pData);
+			Packet& operator<<(const int32_t& pData);
+			Packet& operator<<(const int64_t& pData);
 			Packet& operator<<(const float& pData);
 			Packet& operator<<(const double& pData);
 			Packet& operator<<(const std::string& pData);
@@ -52,6 +56,10 @@ namespace Framework
 			Packet& operator>>(uint16_t& pData);
 			Packet& operator>>(uint32_t& pData);
 			Packet& operator>>(uint64_t& pData);
+			Packet& operator>>(int8_t& pData);
+			Packet& operator>>(int16_t& pData);
+			Packet& operator>>(int32_t& pData);
+			Packet& operator>>(int64_t& pData);
 			Packet& operator>>(float& pData);
 			Packet& operator>>(double& pData);
 			Packet& operator>>(std::string& pData);
