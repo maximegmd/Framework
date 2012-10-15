@@ -1,5 +1,6 @@
 #include "GameServer.hpp"
 #include <random>
+#include <System/Log.h>
 
 namespace Game
 {
@@ -13,6 +14,8 @@ namespace Game
 
 	GameServer::~GameServer()
 	{
+		server->Stop();
+
 		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
 			delete itor->second;
 

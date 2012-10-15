@@ -2,14 +2,10 @@
 
 #include <cstdint>
 #include <vector>
+#include <list>
 #include <string>
 
 #pragma warning(disable: 4251)
-
-// IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// The opcode is the CRC-32 of the opcode's name !!!!
-// Do it here: http://www.lammertbies.nl/comm/info/crc-calculation.html
-// If you don't I WILL KILL YOU !!!!!
 
 namespace Opcode{
 	typedef const uint32_t __opcode;
@@ -83,7 +79,37 @@ namespace Framework
 				*this >> size;
 				if(size > 1000)
 					return *this;
-					
+
+				for(uint64_t i = 0; i < size; ++i)
+				{
+					U data;
+					*this >> data;
+					pData.push_back(data);
+				}
+
+				return *this;
+			}
+
+			template <class U>
+			Packet& operator<<(const std::list<U>& pData)
+			{
+				*this << (uint32_t)pData.size();
+				for(auto itor = pData.begin(), end = pData.end(); itor != end; ++itor)
+				{
+					*this << *itor;
+				}
+
+				return *this;
+			}
+
+			template <class U>
+			Packet& operator>>(std::list<U>& pData)
+			{
+				uint32_t size;
+				*this >> size;
+				if(size > 1000)
+					return *this;
+
 				for(uint64_t i = 0; i < size; ++i)
 				{
 					U data;

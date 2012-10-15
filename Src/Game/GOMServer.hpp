@@ -1,24 +1,11 @@
 #pragma once
 
-#include "Accessors.hpp"
-#include <list>
+#include "GOMObjects.hpp"
+#include <cstdint>
+#include <map>
 
 namespace Game
 {
-	struct GOMState{
-		GOMState(int32_t a, int32_t b, IAccessor* c)
-			:id(a), state(b), accessor(c){}
-		int32_t id, state;
-		IAccessor* accessor;	
-	};
-
-	struct GOMVisitor{
-		void operator()(int32_t id, int32_t state, IAccessor* accessor){
-			accessors.push_back(GOMState(id, state, accessor));
-		}
-
-		std::list<GOMState> accessors;
-	};
 
 	class IGOMServer
 	{
@@ -27,6 +14,8 @@ namespace Game
 
 		virtual void VisitDirty(GOMVisitor& op) = 0;
 		virtual void VisitAll(GOMVisitor& op) = 0;
+
+		virtual void UpdateEntry(int32_t id, int32_t state, const std::string& serializedData) = 0;
 	};
 
 	template <class Model, class Acc = Accessor<Model> >

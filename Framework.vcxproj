@@ -241,9 +241,12 @@
     <ClCompile Include="Src\File\FileIni.cpp" />
     <ClCompile Include="Src\Game\Accessors.cpp" />
     <ClCompile Include="Src\Game\GameServer.cpp" />
+    <ClCompile Include="Src\Game\GOMServer.cpp" />
+    <ClCompile Include="Src\Game\GOMObjects.cpp" />
     <ClCompile Include="Src\Game\MassiveMessageManager.cpp" />
     <ClCompile Include="Src\Game\NetProperties.cpp" />
     <ClCompile Include="Src\Game\Player.cpp" />
+    <ClCompile Include="Src\Game\PlayerHandlers.cpp" />
     <ClCompile Include="Src\Game\PlayerSenders.cpp" />
     <ClCompile Include="Src\Network\BlazePacket.cpp" />
     <ClCompile Include="Src\Network\HttpClient.cpp" />
@@ -287,6 +290,7 @@
     <ClInclude Include="Src\Game\Accessors.hpp" />
     <ClInclude Include="Src\Game\GameServer.hpp" />
     <ClInclude Include="Src\Game\GOMServer.hpp" />
+    <ClInclude Include="Src\Game\GOMObjects.hpp" />
     <ClInclude Include="Src\Game\MassiveMessageManager.hpp" />
     <ClInclude Include="Src\Game\NetProperties.hpp" />
     <ClInclude Include="Src\Game\Player.hpp" />

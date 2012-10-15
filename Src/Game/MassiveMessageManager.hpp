@@ -35,6 +35,8 @@ namespace Game
 
 		bool Server();
 
+		IGOMServer& GetGOMServer() const;
+
 	private:
 
 		void OnConnect(bool pConnected);

@@ -46,6 +46,7 @@ namespace Game
 
 	private:
 
+		void HandleReplicationTransaction(Framework::Network::Packet& pPacket);
 		void HandleHandshake(Framework::Network::Packet& pPacket);
 		void HandleSynchronize(Framework::Network::Packet& pPacket);
 

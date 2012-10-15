@@ -38,9 +38,9 @@ namespace Game
 	{
 	public:
 
-		Accessor(Model* m) : model(m)
+		Accessor(Model* m) 
+			: model(m)
 		{
-
 		}
 
 	protected:
@@ -52,7 +52,7 @@ namespace Game
 	struct Verifier
 	{
 		typedef typename T type;
-		typedef std::function<type()>		Getter;
+		typedef std::function<const type&()>		Getter;
 
 		Verifier(Getter g)
 			:getter(g)

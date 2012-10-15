@@ -45,6 +45,9 @@ namespace Game
 						case kSynchronize:
 							HandleSynchronize(data);
 							break;
+						case kReplicationTransaction:
+							HandleReplicationTransaction(data);
+							break;
 						default:
 							break;
 						}

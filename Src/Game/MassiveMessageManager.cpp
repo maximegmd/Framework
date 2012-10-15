@@ -65,6 +65,7 @@ namespace Game
 
 	void MassiveMessageManager::Connect(const std::string& pAddress, const std::string& pPort)
 	{
+		Framework::System::Log::Debug(std::string("MassiveMessageManager : Connect to ") + pAddress + std::string(" at ") + pPort);
 		connection->OnConnect.connect(boost::bind(&MassiveMessageManager::OnConnect, this, _1));
 		connection->Connect(pAddress,pPort);
 	}
@@ -138,5 +139,10 @@ namespace Game
 	bool MassiveMessageManager::Server()
 	{
 		return host;
+	}
+
+	IGOMServer& MassiveMessageManager::GetGOMServer() const
+	{
+		return *gomServer.get();
 	}
 }
