@@ -9,14 +9,19 @@ namespace Game
 		std::ostringstream os;
 		os << "\nReplication Transaction Log\n\n";
 
-		std::list<GOMStateRaw> states;
+		std::map<uint32_t, std::list<GOMStateRaw> > states;
 		pPacket >> states;
 
 		for(auto itor = states.begin(), end = states.end(); itor != end; ++itor)
 		{
-			TheMassiveMessageMgr->GetGOMServer().UpdateEntry(itor->id, itor->state, itor->data);
-			os << "Id: " << itor->id << " , State : " << itor->state << std::endl;
+			IGOMServer* server = TheMassiveMessageMgr->GetGOMDatabase().Get(itor->first);
+			os << "Group : " << server->GetGroup() << std::endl;
+			for(auto itor2 = itor->second.begin(), end2 = itor->second.end(); itor2 != end2; ++itor2)
+			{
+				server->UpdateEntry(itor2->id, itor2->state, itor2->data);
+				os << "\tId: " << itor2->id << " , State : " << itor2->state << std::endl;
+			}
 		}
-		Framework::System::Log::Debug(os.str());
+		Framework::System::Log::Print(os.str());
 	}
 }

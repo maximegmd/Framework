@@ -46,8 +46,15 @@ namespace Game
 		 * @param gomEntry The GOM Entry.
 		 * @return
 		 */
-		void operator()(int32_t id, int32_t state, IGOMEntry* gomEntry);
+		void operator()(int32_t type, int32_t id, int32_t state, IGOMEntry* gomEntry);
 
-		std::list<GOMState> gomEntries;
+		template <class Op>
+		void apply(Op& op)
+		{
+			for(auto itor = gomEntries.begin(), end = gomEntries.end(); itor != end; ++itor)
+				std::for_each(itor->second.begin(), itor->second.end(), op);
+		}
+
+		std::map<uint32_t, std::list<GOMState> > gomEntries;
 	};
 }

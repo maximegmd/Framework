@@ -5,8 +5,9 @@
 namespace Game
 {
 	GameServer::GameServer(short port, GameServer::PlayerConstructor playerCtor, GameServer::GOMServerConstructor gomCtor)
-		:playerContructor(playerCtor), gomServerConstructor(gomCtor), gomServer(gomCtor(0))
+		:playerContructor(playerCtor), gomServerConstructor(gomCtor)
 	{
+		gomDatabase.reset(new GOMDatabase(gomServerConstructor(0)));
 		server.reset(new Framework::Network::Server(port));
 		server->OnConnection.connect(boost::bind(&GameServer::OnConnection, this, _1));
 		server->Start();
@@ -20,6 +21,8 @@ namespace Game
 			delete itor->second;
 
 		players.clear();
+
+		Framework::System::Log::Debug("GameServer deleted");
 	}
 
 	void GameServer::Update()
@@ -46,9 +49,9 @@ namespace Game
 		return cellSize;
 	}
 
-	IGOMServer& GameServer::GetGOMServer() const
+	GOMDatabase& GameServer::GetGOMDatabase() const
 	{
-		return *gomServer.get();
+		return *gomDatabase.get();
 	}
 
 	void GameServer::OnConnection(Framework::Network::TcpConnection::pointer pConnection)

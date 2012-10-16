@@ -1,11 +1,13 @@
 #pragma once
 
 #include <map>
+#include <vector>
+
 #include <Network/Server.h>
 #include <Network/Packet.h>
 
 #include <Game/Player.hpp>
-#include <Game/GOMServer.hpp>
+#include <Game/GOMDatabase.hpp>
 
 namespace Game
 {
@@ -13,8 +15,8 @@ namespace Game
 	{
 	public:
 
-		typedef std::function<Player* (Player::KeyType, void*)> PlayerConstructor;
-		typedef std::function<IGOMServer* (void*)>				GOMServerConstructor;
+		typedef std::function<Player* (Player::KeyType, GameServer*)> PlayerConstructor;
+		typedef std::function<std::vector<IGOMServer*> (void*)>	GOMServerConstructor;
 
 		/**
 		 * @brief Constructs a GameServer instance
@@ -52,7 +54,7 @@ namespace Game
 		 * @brief Obtain the GOM Server associated with the GameServer.
 		 * @return The GOM Server.
 		 */
-		IGOMServer& GetGOMServer() const;
+		GOMDatabase& GetGOMDatabase() const;
 
 		/**
 		 * @brief Callback handling new client connections to the GameServer.
@@ -65,7 +67,7 @@ namespace Game
 		std::map<Player::KeyType, Player*> players;
 
 		std::unique_ptr<Framework::Network::Server>			server;
-		std::unique_ptr<IGOMServer>							gomServer;
+		std::unique_ptr<GOMDatabase>						gomDatabase;
 
 		int cellSize;
 

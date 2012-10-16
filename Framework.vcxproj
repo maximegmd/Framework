@@ -239,6 +239,7 @@
     </ClCompile>
     <ClCompile Include="Src\File\File.cpp" />
     <ClCompile Include="Src\File\FileIni.cpp" />
+    <ClCompile Include="Src\Game\GOMDatabase.cpp" />
     <ClCompile Include="Src\Game\GOMEntry.cpp" />
     <ClCompile Include="Src\Game\GameServer.cpp" />
     <ClCompile Include="Src\Game\GOMServer.cpp" />
@@ -288,6 +289,7 @@
     <ClInclude Include="Src\DataBase\sqlwrap.h" />
     <ClInclude Include="Src\File\File.h" />
     <ClInclude Include="Src\File\FileIni.h" />
+    <ClInclude Include="Src\Game\GOMDatabase.hpp" />
     <ClInclude Include="Src\Game\GOMEntry.hpp" />
     <ClInclude Include="Src\Game\GameServer.hpp" />
     <ClInclude Include="Src\Game\GOMServer.hpp" />

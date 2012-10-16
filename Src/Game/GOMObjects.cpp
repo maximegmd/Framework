@@ -24,8 +24,8 @@ namespace Game
 		return packet;
 	}
 
-	void GOMVisitor::operator()(int32_t id, int32_t state, IGOMEntry* accessor)
+	void GOMVisitor::operator()(int32_t type, int32_t id, int32_t state, IGOMEntry* accessor)
 	{
-		gomEntries.push_back(GOMState(id, state, accessor));
+		gomEntries[type].push_back(GOMState(id, state, accessor));
 	}
 }

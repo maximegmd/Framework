@@ -52,14 +52,19 @@ namespace Game
 		host = pHost;
 		//if(host)
 		{
+			gameServer.reset(nullptr);
 			gameServer.reset(new GameServer(port, playerConstructor, gomConstructor));
 		}
 		//else
 		{
+			gomDatabase.reset(new GOMDatabase(gomConstructor(nullptr)));	
+			Player* player = playerConstructor ? playerConstructor(kPlayerSelf, nullptr) : new Player(kPlayerSelf);
+			localPlayer.reset(player);
+
 			ioServicePool.Run();
 			connection.reset(::new Framework::Network::TcpConnection(ioServicePool.GetIoService()));
 			Connect(address, std::to_string((long long)port));
-			gomServer.reset(gomConstructor(nullptr));
+					
 		}
 	}
 
@@ -90,8 +95,6 @@ namespace Game
 	{
 		if(pConnected)
 		{
-			Player* player = playerConstructor ? playerConstructor(kPlayerSelf, nullptr) : new Player(kPlayerSelf);
-			localPlayer.reset(player);
 			localPlayer->SetConnection(connection);
 
 			std::string decKey = Framework::System::RandomData(32);
@@ -102,8 +105,8 @@ namespace Game
 			Framework::Network::Packet packet(1, Framework::Network::Packet::kHandshake);
 			packet << decKey << encKey << decIV << encIV;
 
-			player->SetCipher(new Framework::Crypt::Cipher(encKey, decKey, encIV, decIV));
-			player->Write(packet);
+			localPlayer->SetCipher(new Framework::Crypt::Cipher(encKey, decKey, encIV, decIV));
+			localPlayer->Write(packet);
 
 			connection->Start();
 		}
@@ -141,8 +144,10 @@ namespace Game
 		return host;
 	}
 
-	IGOMServer& MassiveMessageManager::GetGOMServer() const
+	GOMDatabase& MassiveMessageManager::GetGOMDatabase() const
 	{
-		return *gomServer.get();
+		if(gomDatabase)
+			return *gomDatabase;
+		return gameServer->GetGOMDatabase();
 	}
 }

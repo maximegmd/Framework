@@ -82,7 +82,7 @@ namespace Game
 		 * @brief Get the GOM server.
 		 * @return The GOM server.
 		 */
-		IGOMServer& GetGOMServer() const;
+		GOMDatabase& GetGOMDatabase() const;
 
 	private:
 
@@ -94,7 +94,7 @@ namespace Game
 
 		std::unique_ptr<Player> localPlayer;
 
-		std::unique_ptr<IGOMServer>							gomServer;
+		std::unique_ptr<GOMDatabase>	gomDatabase;
 
 		bool host;
 		uint16_t port;

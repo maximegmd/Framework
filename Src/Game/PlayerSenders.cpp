@@ -1,15 +1,17 @@
 #include "Player.hpp"
+#include <Game/GOMDatabase.hpp>
+#include <System/Log.h>
 
 namespace Game
 {
-	void Player::SendReplicationTransaction(IGOMServer& gomServer)
+	void Player::SendReplicationTransaction(GOMDatabase& gomDatabase)
 	{
 		Framework::Network::Packet packet(kReplicationTransaction);
 
 		GOMVisitor visitor;
-		gomServer.VisitAll(visitor);
+		gomDatabase.VisitAll(Game::GOMDatabase::kAllGOMServers, visitor);
 
-		std::for_each(visitor.gomEntries.begin(), visitor.gomEntries.end(), [](GOMState& state){state.full = true;});
+		visitor.apply([](GOMState& state){state.full = true;});
 
 		packet << visitor.gomEntries;
 

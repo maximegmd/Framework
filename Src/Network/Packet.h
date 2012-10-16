@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include <list>
+#include <map>
 #include <string>
 
 #pragma warning(disable: 4251)
@@ -59,6 +60,37 @@ namespace Framework
 			Packet& operator>>(float& pData);
 			Packet& operator>>(double& pData);
 			Packet& operator>>(std::string& pData);
+
+			template <class K, class U>
+			Packet& operator<<(const std::map<K, U>& pData)
+			{
+				*this << (uint32_t)pData.size();
+				for(auto itor = pData.begin(), end = pData.end(); itor != end; ++itor)
+				{
+					*this << itor->first << itor->second;
+				}
+
+				return *this;
+			}
+
+			template <class K, class U>
+			Packet& operator>>(std::map<K, U>& pData)
+			{
+				uint32_t size;
+				*this >> size;
+				if(size > 1000)
+					return *this;
+
+				for(uint64_t i = 0; i < size; ++i)
+				{
+					K key;
+					U data;
+					*this >> key >> data;
+					pData.insert(std::pair<K,U>(key, data));
+				}
+
+				return *this;
+			}
 
 			template <class U>
 			Packet& operator<<(const std::vector<U>& pData)

@@ -3,7 +3,7 @@
 #include <Network/Packet.h>
 #include <Network/TcpConnection.h>
 #include <Network/NinjatoStrategy.h>
-#include <Game/GOMServer.hpp>
+#include <Game/GOMDatabase.hpp>
 
 namespace Game
 {
@@ -66,7 +66,7 @@ namespace Game
 		 * @brief Send a replication transaction to the client.
 		 * @param gomServer The GOM server to replicate.
 		 */
-		void SendReplicationTransaction(IGOMServer& gomServer);
+		void SendReplicationTransaction(Game::GOMDatabase& gomServer);
 		/**
 		 * @brief Pump the events.
 		 */

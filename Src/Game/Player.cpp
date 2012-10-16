@@ -98,7 +98,7 @@ namespace Game
 		SetCipher(new Framework::Crypt::Cipher(salsaEnc, salsaDec, salsaEncIV, salsaDecIV));
 
 		SendSynchronize();
-		SendReplicationTransaction(gameServer->GetGOMServer());
+		SendReplicationTransaction(gameServer->GetGOMDatabase());
 	}
 
 	void Player::HandleSynchronize(Framework::Network::Packet& pPacket)
