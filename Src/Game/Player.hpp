@@ -25,10 +25,21 @@ namespace Game
 
 		typedef int32_t KeyType;
 
-		Player(KeyType, GameServer* server = nullptr);
-
-		void SetConnection(Framework::Network::TcpConnection::pointer pConnection);
-
+		/**
+		 * @brief Constructs a Player.
+		 * @param id The Player's id.
+		 * @param server The GameServer associated with the Player, nullptr if none.
+		 */
+		Player(KeyType id, GameServer* server = nullptr);
+		/**
+		 * @brief Set the connection associated with the player.
+		 * @param pConnection The connection associated with the player.
+		 */
+		virtual void SetConnection(Framework::Network::TcpConnection::pointer pConnection);
+		/**
+		 * @brief Get the player's id.
+		 * @return The player's id.
+		 */
 		KeyType GetKey() const;
 
 	protected:
@@ -36,12 +47,29 @@ namespace Game
 		friend class MassiveMessageManager;
 		friend class GameServer;
 
+		/**
+		 * @brief Write a packet to the player.
+		 * @param pPacket The packet to write.
+		 * @return
+		 */
 		void Write(Framework::Network::Packet& pPacket);
+		/**
+		 * @brief The a custom cipher.
+		 * @param pCipher The cipher.
+		 */
 		void SetCipher(Framework::Crypt::Cipher* pCipher);
-		void Synchronize();
-
+		/**
+		 * @brief Send a Synchronization packet from the server to the client.
+		 */
+		void SendSynchronize();
+		/** 
+		 * @brief Send a replication transaction to the client.
+		 * @param gomServer The GOM server to replicate.
+		 */
 		void SendReplicationTransaction(IGOMServer& gomServer);
-
+		/**
+		 * @brief Pump the events.
+		 */
 		void Update();
 
 	private:

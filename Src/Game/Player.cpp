@@ -22,7 +22,7 @@ namespace Game
 		return key;
 	}
 
-	void Player::Synchronize()
+	void Player::SendSynchronize()
 	{
 		Framework::Network::Packet pack(kSynchronize);
 		pack << (uint32_t)GetKey();
@@ -97,7 +97,7 @@ namespace Game
 		pPacket >> salsaEnc >> salsaDec >> salsaEncIV >> salsaDecIV;
 		SetCipher(new Framework::Crypt::Cipher(salsaEnc, salsaDec, salsaEncIV, salsaDecIV));
 
-		Synchronize();
+		SendSynchronize();
 		SendReplicationTransaction(gameServer->GetGOMServer());
 	}
 
