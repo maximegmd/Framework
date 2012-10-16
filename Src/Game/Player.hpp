@@ -35,7 +35,7 @@ namespace Game
 		 * @brief Set the connection associated with the player.
 		 * @param pConnection The connection associated with the player.
 		 */
-		virtual void SetConnection(Framework::Network::TcpConnection::pointer pConnection);
+		void SetConnection(Framework::Network::TcpConnection::pointer pConnection);
 		/**
 		 * @brief Get the player's id.
 		 * @return The player's id.
