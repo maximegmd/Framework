@@ -28,20 +28,20 @@ namespace Game
 		}
 	}
 
-	void GOMDatabase::VisitDirty(uint32_t key, GOMVisitor& op)
+	void GOMDatabase::VisitDirty(uint32_t key, uint32_t pType, GOMVisitor& op)
 	{
 		if(key == kAllGOMServers)
 		{
 			for(auto itor = gomServers.begin(), end = gomServers.end(); itor != end; ++itor)
 			{
-				itor->second->VisitDirty(op);
+				itor->second->VisitDirty(op, pType);
 			}
 		}
 		else
 		{
 			auto server = Get(key);
 			if(server)
-				server->VisitDirty(op);
+				server->VisitDirty(op, pType);
 		}
 	}
 

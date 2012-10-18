@@ -16,5 +16,7 @@ namespace Game
 		packet << visitor.gomEntries;
 
 		Write(packet);
+
+		synchronized = true;
 	}
 }

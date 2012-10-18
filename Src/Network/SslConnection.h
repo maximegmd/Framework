@@ -13,10 +13,8 @@
 #pragma comment(lib, "ssleay32MTd.lib")
 
 #include <boost/thread.hpp>
-#include <Network/Bfbc2Packet.h>
 #include <boost/enable_shared_from_this.hpp>
 #include <list>
-
 
 namespace Framework
 {

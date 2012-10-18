@@ -20,7 +20,8 @@ namespace Game
 
 		enum {
 			kSynchronize = 'sync',
-			kReplicationTransaction = 'rptr'
+			kReplicationTransaction = 'rptr',
+			kAwareness = 'awar'
 		};
 
 		typedef int32_t KeyType;
@@ -42,6 +43,8 @@ namespace Game
 		 */
 		KeyType GetKey() const;
 
+		bool Synchronized() const;
+
 	protected:
 
 		friend class MassiveMessageManager;
@@ -62,7 +65,7 @@ namespace Game
 		 * @brief Send a Synchronization packet from the server to the client.
 		 */
 		void SendSynchronize();
-		/** 
+		/**
 		 * @brief Send a replication transaction to the client.
 		 * @param gomServer The GOM server to replicate.
 		 */
@@ -77,7 +80,9 @@ namespace Game
 		void HandleReplicationTransaction(Framework::Network::Packet& pPacket);
 		void HandleHandshake(Framework::Network::Packet& pPacket);
 		void HandleSynchronize(Framework::Network::Packet& pPacket);
+		void HandleAwareness(Framework::Network::Packet& pPacket);
 
+		bool synchronized;
 		KeyType key;
 		GameServer* gameServer;
 		Framework::Network::TcpConnection::pointer connection;

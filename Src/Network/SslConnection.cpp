@@ -1,7 +1,6 @@
 #if !defined(NO_SSL)
 
 #include <Network/SslConnection.h>
-#include <Network/Bfbc2Packet.h>
 #include <System/Log.h>
 #include <System/Tools.h>
 #include <fstream>
@@ -44,7 +43,7 @@ namespace Framework
 			mTimeout.async_wait(boost::bind(&SslConnection::OnTimeout, shared_from_this(), _1));
 
 			mSocket.lowest_layer().set_option(boost::asio::ip::tcp::no_delay(false));
-			mSocket.async_handshake(boost::asio::ssl::stream_base::server, 
+			mSocket.async_handshake(boost::asio::ssl::stream_base::server,
 				boost::bind(&SslConnection::handle_handshake, shared_from_this(), boost::asio::placeholders::error));
 		}
 		//---------------------------------------------------------------------

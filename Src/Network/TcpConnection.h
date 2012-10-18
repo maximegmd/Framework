@@ -3,7 +3,7 @@
 #include <boost/signal.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
-#include <Network/Bfbc2Packet.h>
+
 #include <Network/Strategy.h>
 #include <boost/enable_shared_from_this.hpp>
 #include <list>
@@ -84,10 +84,9 @@ namespace Framework
 
 		private:
 
-		
 			std::string mOutboundData; //< Outbound data buffer, kept for reference
 			std::vector<char>  mInboundHeader;
-			std::vector<char>  mInboundData; 
+			std::vector<char>  mInboundData;
 
 			IStrategy* mStrategy;
 			boost::mutex mPacketLock;

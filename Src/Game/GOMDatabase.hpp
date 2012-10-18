@@ -22,7 +22,7 @@ namespace Game
 		IGOMServer* Get(uint32_t key);
 
 		void VisitAll(uint32_t key, GOMVisitor& op);
-		void VisitDirty(uint32_t key, GOMVisitor& op);
+		void VisitDirty(uint32_t key, uint32_t pType, GOMVisitor& op);
 
 	protected:
 

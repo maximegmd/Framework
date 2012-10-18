@@ -6,9 +6,8 @@
 namespace Game
 {
 	Player::Player(Player::KeyType key, GameServer* server)
-		: key(key), gameServer(server)
+		: key(key), gameServer(server), synchronized(false)
 	{
-
 	}
 
 	void Player::SetConnection(Framework::Network::TcpConnection::pointer pConnection)
@@ -20,6 +19,11 @@ namespace Game
 	Player::KeyType Player::GetKey() const
 	{
 		return key;
+	}
+
+	bool Player::Synchronized() const
+	{
+		return synchronized;
 	}
 
 	void Player::SendSynchronize()
@@ -98,7 +102,6 @@ namespace Game
 		SetCipher(new Framework::Crypt::Cipher(salsaEnc, salsaDec, salsaEncIV, salsaDecIV));
 
 		SendSynchronize();
-		SendReplicationTransaction(gameServer->GetGOMDatabase());
 	}
 
 	void Player::HandleSynchronize(Framework::Network::Packet& pPacket)

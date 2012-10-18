@@ -21,8 +21,9 @@ namespace Game
 		/**
 		 * @brief Visits every dirty GOM Entry.
 		 * @param op The visitor.
+		 * @param pType The type of transaction level to visit.
 		 */
-		virtual void VisitDirty(GOMVisitor& op) = 0;
+		virtual void VisitDirty(GOMVisitor& op, uint32_t pType) = 0;
 		/**
 		 * @brief Visits all GOM Entries.
 		 * @param op The visitor.
@@ -35,6 +36,12 @@ namespace Game
 		 * @param serializedData The serialized data associated with it.
 		 */
 		virtual void UpdateEntry(int32_t id, int32_t state, const std::string& serializedData) = 0;
+	};
+
+	enum{
+		kTransactionFull = 1 << 0,
+		kTransactionPartial = 1 << 1,
+		kAllTransactions = (1 << 2) - 1
 	};
 
 	template <class Model, class EntryType, uint32_t Key >
@@ -117,19 +124,25 @@ namespace Game
 		 * @brief Visits every dirty GOM Entry.
 		 * @param op The visitor.
 		 */
-		void VisitDirty(GOMVisitor& op)
+		void VisitDirty(GOMVisitor& op, uint32_t pType)
 		{
-			for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor){
-				if(itor->second.IsDirty()){
-					op(GetGroup(), itor->first, 2, &itor->second);
-					itor->second.SetDirty(false);
+			if(pType & kTransactionFull)
+			{
+				for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor){
+					if(itor->second.IsDirty()){
+						op(GetGroup(), itor->first, 2, &itor->second);
+						itor->second.SetDirty(false);
+					}
 				}
 			}
-			
-			for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor){
-				if(itor->second.IsDirty()){
-					op(GetGroup(), itor->first, 1, &itor->second);
-					itor->second.SetDirty(false);
+
+			if(pType & kTransactionPartial)
+			{
+				for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor){
+					if(itor->second.IsDirty()){
+						op(GetGroup(), itor->first, 1, &itor->second);
+						itor->second.SetDirty(false);
+					}
 				}
 			}
 		}

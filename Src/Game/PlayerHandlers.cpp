@@ -24,4 +24,9 @@ namespace Game
 		}
 		Framework::System::Log::Print(os.str());
 	}
+
+	void Player::HandleAwareness(Framework::Network::Packet& pPacket)
+	{
+		SendReplicationTransaction(gameServer->GetGOMDatabase());
+	}
 }

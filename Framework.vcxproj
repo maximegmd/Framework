@@ -250,7 +250,6 @@
     <ClCompile Include="Src\Game\Player.cpp" />
     <ClCompile Include="Src\Game\PlayerHandlers.cpp" />
     <ClCompile Include="Src\Game\PlayerSenders.cpp" />
-    <ClCompile Include="Src\Network\BlazePacket.cpp" />
     <ClCompile Include="Src\Network\HttpClient.cpp" />
     <ClCompile Include="Src\Network\HttpServer\Connection.cpp" />
     <ClCompile Include="Src\Network\HttpServer\MimeTypes.cpp" />
@@ -259,7 +258,6 @@
     <ClCompile Include="Src\Network\HttpServer\RequestParser.cpp" />
     <ClCompile Include="Src\Network\HttpServer\Server.cpp" />
     <ClCompile Include="Src\Network\IoServicePool.cpp" />
-    <ClCompile Include="Src\Network\Bfbc2Packet.cpp" />
     <ClCompile Include="Src\Network\Packet.cpp" />
     <ClCompile Include="Src\Network\Server.cpp" />
     <ClCompile Include="Src\Network\SslConnection.cpp" />
@@ -298,10 +296,6 @@
     <ClInclude Include="Src\Game\MassiveMessageManager.hpp" />
     <ClInclude Include="Src\Game\NetProperties.hpp" />
     <ClInclude Include="Src\Game\Player.hpp" />
-    <ClInclude Include="Src\Network\Bfbc2Packet.h" />
-    <ClInclude Include="Src\Network\Bfbc2Strategy.h" />
-    <ClInclude Include="Src\Network\BlazePacket.h" />
-    <ClInclude Include="Src\Network\BlazeStrategy.h" />
     <ClInclude Include="Src\Network\HttpClient.h" />
     <ClInclude Include="Src\Network\HttpServer\Connection.hpp" />
     <ClInclude Include="Src\Network\HttpServer\Header.hpp" />

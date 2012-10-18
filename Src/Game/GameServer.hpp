@@ -39,6 +39,12 @@ namespace Game
 		void SendMessageAll(Framework::Network::Packet& pPacket);
 
 		/**
+		 * @brief Send a message to every player currently connected to the game server and synchronized.
+		 * @param pPacket The packet to send.
+		 */
+		void SendMessageAllSynchronized(Framework::Network::Packet& pPacket);
+
+		/**
 		 * @brief Sets the size of the GOM's view distance.
 		 * @param cellsize The size of the GOM's view distance.
 		 */
@@ -64,10 +70,15 @@ namespace Game
 
 	private:
 
+		void SendReplicationTransaction(GOMVisitor& visitor);
+
 		std::map<Player::KeyType, Player*> players;
 
 		std::unique_ptr<Framework::Network::Server>			server;
 		std::unique_ptr<GOMDatabase>						gomDatabase;
+
+		boost::timer mTransactionFullTimer;
+		boost::timer mTransactionPartialTimer;
 
 		int cellSize;
 

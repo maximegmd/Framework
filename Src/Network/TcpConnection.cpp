@@ -1,5 +1,4 @@
 #include <Network/TcpConnection.h>
-#include <Network/Bfbc2Packet.h>
 #include <System/Log.h>
 #include <System/Tools.h>
 #include <fstream>
@@ -190,7 +189,7 @@ namespace Framework
 		void TcpConnection::Connect(const std::string& pAddress, const std::string& pPort)
 		{
 			boost::asio::ip::tcp::resolver::query query(pAddress, pPort);
-			mResolver.async_resolve(query, boost::bind(&TcpConnection::handle_resolve, this, 
+			mResolver.async_resolve(query, boost::bind(&TcpConnection::handle_resolve, this,
 				boost::asio::placeholders::error,
 				boost::asio::placeholders::iterator));
 		}
