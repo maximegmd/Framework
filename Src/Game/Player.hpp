@@ -24,7 +24,7 @@ namespace Game
 			kAwareness = 'awar'
 		};
 
-		typedef int32_t KeyType;
+		typedef int KeyType;
 		typedef void (Player::*PacketHandler)(Framework::Network::Packet& pPacket);
 
 		/**
@@ -81,7 +81,11 @@ namespace Game
 		 * @param opcode The opcode.
 		 * @param handler The handler to use.
 		 */
-		static void Register(uint32_t opcode, PacketHandler handler);
+		template <class T>
+		static void Register(uint32_t opcode, void (T::*handler)(Framework::Network::Packet& pPacket))
+		{
+			handlers[opcode] = (PacketHandler)handler;
+		}
 
 	private:
 

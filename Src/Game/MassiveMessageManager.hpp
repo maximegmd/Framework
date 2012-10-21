@@ -63,16 +63,17 @@ namespace Game
 		Game::Player* GetLocalPlayer();
 
 		/**
-		 * @brief Sends a message to everyone, be it only the server or every player.
-		 * @param pPacket The packet to send.
-		 */
-		void SendMessageAll(Framework::Network::Packet& pPacket);
-		/**
 		 * @brief Sends a message to the specified players.
 		 * @param pKey The players to send to.
 		 * @param pPacket The packet to send.
 		 */
-		void SendMessage(Game::Player::KeyType pKey, Framework::Network::Packet& pPacket);
+		void SendMessageTo(int pKey, Framework::Network::Packet& pPacket);
+		/**
+		 * @brief Sends a message to everyone, be it only the server or every player.
+		 * @param pPacket The packet to send.
+		 */
+		void SendMessageAll(Framework::Network::Packet& pPacket);
+
 		/**
 		 * @brief Get if in server mode.
 		 * @return true if in server mode, false if in client mode.

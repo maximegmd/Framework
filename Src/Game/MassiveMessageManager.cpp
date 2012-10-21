@@ -112,12 +112,7 @@ namespace Game
 		}
 	}
 
-	void MassiveMessageManager::SendMessageAll(Framework::Network::Packet& pPacket)
-	{
-		SendMessage(kPlayerAll, pPacket);
-	}
-
-	void MassiveMessageManager::SendMessage(Player::KeyType pKey, Framework::Network::Packet& pPacket)
+	void MassiveMessageManager::SendMessageTo(int pKey, Framework::Network::Packet& pPacket)
 	{
 		if(localPlayer)
 		{
@@ -137,6 +132,11 @@ namespace Game
 			if(localPlayer)
 				localPlayer->Write(pPacket);
 		}
+	}
+
+	void MassiveMessageManager::SendMessageAll(Framework::Network::Packet& pPacket)
+	{
+		SendMessageTo(kPlayerAll, pPacket);
 	}
 
 	bool MassiveMessageManager::Server()

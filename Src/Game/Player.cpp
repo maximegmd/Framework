@@ -5,10 +5,7 @@
 
 namespace Game
 {
-	void Player::Register(uint32_t opcode, PacketHandler handler)
-	{
-		handlers[opcode] = handler;
-	}
+	std::map<uint32_t, Player::PacketHandler> Player::handlers;
 
 	Player::Player(Player::KeyType key, GameServer* server)
 		: key(key), gameServer(server), synchronized(false)
