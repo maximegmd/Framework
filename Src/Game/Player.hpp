@@ -25,6 +25,7 @@ namespace Game
 		};
 
 		typedef int32_t KeyType;
+		typedef void (Player::*PacketHandler)(Framework::Network::Packet& pPacket);
 
 		/**
 		 * @brief Constructs a Player.
@@ -75,6 +76,13 @@ namespace Game
 		 */
 		void Update();
 
+		/**
+		 * @brief Register a handler to an opcode.
+		 * @param opcode The opcode.
+		 * @param handler The handler to use.
+		 */
+		static void Register(uint32_t opcode, PacketHandler handler);
+
 	private:
 
 		void HandleReplicationTransaction(Framework::Network::Packet& pPacket);
@@ -86,5 +94,7 @@ namespace Game
 		KeyType key;
 		GameServer* gameServer;
 		Framework::Network::TcpConnection::pointer connection;
+
+		static std::map<uint32_t, PacketHandler> handlers;
 	};
 }

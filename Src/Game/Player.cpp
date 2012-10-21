@@ -5,6 +5,11 @@
 
 namespace Game
 {
+	void Player::Register(uint32_t opcode, PacketHandler handler)
+	{
+		handlers[opcode] = handler;
+	}
+
 	Player::Player(Player::KeyType key, GameServer* server)
 		: key(key), gameServer(server), synchronized(false)
 	{
@@ -53,6 +58,7 @@ namespace Game
 							HandleReplicationTransaction(data);
 							break;
 						default:
+							(this->*handlers.at(data.Opcode))(data);
 							break;
 						}
 						break;
