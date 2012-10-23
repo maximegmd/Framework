@@ -9,6 +9,11 @@ namespace Game
 	class IGOMServer
 	{
 	public:
+
+		virtual ~IGOMServer()
+		{
+
+		}
 		/**
 		 * @brief Will query each GOM Entry to see if it's dirty or not.
 		 */
@@ -38,19 +43,30 @@ namespace Game
 		virtual void UpdateEntry(int32_t id, int32_t state, const std::string& serializedData) = 0;
 	};
 
-	enum{
+	enum
+	{
 		kTransactionFull = 1 << 0,
 		kTransactionPartial = 1 << 1,
 		kAllTransactions = (1 << 2) - 1
 	};
 
-	template <class Model, class EntryType, uint32_t Key >
+	template <class EntryType, uint32_t Key >
 	class GOMServer : public IGOMServer
 	{
 	public:
 
+		typedef typename EntryType::Type WrappedType;
+		enum{
+			kGroupKey = Key
+		};
+
 		GOMServer():replicationId(0){}
-		virtual ~GOMServer(){}
+		virtual ~GOMServer()
+		{
+			replicationMap[2].clear();
+			replicationMap[1].clear();
+			replicationMap[0].clear();
+		}
 
 		/**
 		 * @brief Will query each GOM Entry to see if it's dirty or not.
@@ -59,19 +75,22 @@ namespace Game
 		{
 			DoUpdate();
 
-			for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor){
-				if(!itor->second.IsDirty())
-					itor->second.Update();
+			for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor)
+			{
+				if(!itor->second->IsDirty())
+					itor->second->Update();
 			}
 
-			for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor){
-				if(!itor->second.IsDirty())
-					itor->second.Update();
+			for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor)
+			{
+				if(!itor->second->IsDirty())
+					itor->second->Update();
 			}
 
-			for(auto itor = replicationMap[0].begin(), end = replicationMap[0].end(); itor != end; ++itor){
-				if(!itor->second.IsDirty())
-					itor->second.Update();
+			for(auto itor = replicationMap[0].begin(), end = replicationMap[0].end(); itor != end; ++itor)
+			{
+				if(!itor->second->IsDirty())
+					itor->second->Update();
 			}
 		}
 		/**
@@ -89,7 +108,7 @@ namespace Game
 		 * @param state The GOM entry's replication state.
 		 * @param id The GOM entry's id.
 		 */
-		void Add(Model* m, int32_t state, int32_t id = -1)
+		void Add(WrappedType* m, int32_t state, int32_t id = -1)
 		{
 			DoAdd(m, state, id);
 		}
@@ -108,16 +127,19 @@ namespace Game
 		 */
 		void VisitAll(GOMVisitor& op)
 		{
-			for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor){
-				op(GetGroup(), itor->first, 2, &itor->second);
+			for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor)
+			{
+				op(GetGroup(), itor->first, 2, itor->second.get());
 			}
 
-			for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor){
-				op(GetGroup(),itor->first, 1, &itor->second);
+			for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor)
+			{
+				op(GetGroup(),itor->first, 1, itor->second.get());
 			}
 
-			for(auto itor = replicationMap[0].begin(), end = replicationMap[0].end(); itor != end; ++itor){
-				op(GetGroup(),itor->first, 0, &itor->second);
+			for(auto itor = replicationMap[0].begin(), end = replicationMap[0].end(); itor != end; ++itor)
+			{
+				op(GetGroup(),itor->first, 0, itor->second.get());
 			}
 		}
 		/**
@@ -128,20 +150,24 @@ namespace Game
 		{
 			if(pType & kTransactionFull)
 			{
-				for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor){
-					if(itor->second.IsDirty()){
-						op(GetGroup(), itor->first, 2, &itor->second);
-						itor->second.SetDirty(false);
+				for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor)
+				{
+					if(itor->second->IsDirty())
+					{
+						op(GetGroup(), itor->first, 2, itor->second.get());
+						itor->second->SetDirty(false);
 					}
 				}
 			}
 
 			if(pType & kTransactionPartial)
 			{
-				for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor){
-					if(itor->second.IsDirty()){
-						op(GetGroup(), itor->first, 1, &itor->second);
-						itor->second.SetDirty(false);
+				for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor)
+				{
+					if(itor->second->IsDirty())
+					{
+						op(GetGroup(), itor->first, 1, itor->second.get());
+						itor->second->SetDirty(false);
 					}
 				}
 			}
@@ -149,11 +175,11 @@ namespace Game
 
 	protected:
 
-		virtual void DoAdd(Model*, int32_t, int32_t = -1) = 0;
+		virtual void DoAdd(WrappedType*, int32_t, int32_t = -1) = 0;
 		virtual void DoRemove(int32_t, int32_t) = 0;
 		virtual void DoUpdate() = 0;
 
 		int32_t							replicationId;
-		std::map<int32_t, EntryType>    replicationMap[3];
+		std::map<int32_t, std::shared_ptr<EntryType> >    replicationMap[3];
 	};
 }

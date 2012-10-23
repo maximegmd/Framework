@@ -14,7 +14,7 @@ namespace Game
 
 		for(auto itor = states.begin(), end = states.end(); itor != end; ++itor)
 		{
-			IGOMServer* server = TheMassiveMessageMgr->GetGOMDatabase().Get(itor->first);
+			IGOMServer* server = TheMassiveMessageMgr->GetGOMDatabase()->Get(itor->first);
 			os << "Group : " << server->GetGroup() << std::endl;
 			for(auto itor2 = itor->second.begin(), end2 = itor->second.end(); itor2 != end2; ++itor2)
 			{

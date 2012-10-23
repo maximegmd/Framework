@@ -83,7 +83,7 @@ namespace Game
 		 * @brief Get the GOM server.
 		 * @return The GOM server.
 		 */
-		GOMDatabase& GetGOMDatabase() const;
+		GOMDatabase* GetGOMDatabase() const;
 
 	private:
 

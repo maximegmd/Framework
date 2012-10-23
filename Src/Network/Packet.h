@@ -37,6 +37,7 @@ namespace Framework
 			
 			Packet& operator=(Packet&& pPacket);
 
+			Packet& operator<<(bool pData);
 			Packet& operator<<(const uint8_t& pData);
 			Packet& operator<<(const uint16_t& pData);
 			Packet& operator<<(const uint32_t& pData);
@@ -49,6 +50,7 @@ namespace Framework
 			Packet& operator<<(const double& pData);
 			Packet& operator<<(const std::string& pData);
 
+			Packet& operator>>(bool& pData);
 			Packet& operator>>(uint8_t& pData);
 			Packet& operator>>(uint16_t& pData);
 			Packet& operator>>(uint32_t& pData);

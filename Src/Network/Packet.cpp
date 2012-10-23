@@ -1,4 +1,5 @@
 #include <Network/Packet.h>
+#include <sstream>
 
 namespace Framework
 {
@@ -32,6 +33,12 @@ namespace Framework
 			Size = std::move(pPacket.Size);
 			mBuffer = std::move(pPacket.mBuffer);
 			
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator<<(bool pData)
+		{
+			*this << uint8_t(pData ? 1 : 0);
 			return *this;
 		}
 		//---------------------------------------------------------------------
@@ -97,18 +104,17 @@ namespace Framework
 		//---------------------------------------------------------------------
 		Packet& Packet::operator<<(const std::string& pData)
 		{
-			if(pData.empty() || *(pData.end() - 1) != 0)
-			{
-				*this << (uint32_t)pData.size() + 1;
-				mBuffer.append(pData.c_str(), pData.size());
-				mBuffer.push_back(0);
-			}
-			else
-			{
-				*this << (uint32_t)pData.size();
-				mBuffer.append(pData.c_str(), pData.size());
-			}
-
+			*this << (uint32_t)pData.size();
+			mBuffer.append(pData.c_str(), pData.size());
+			
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator>>(bool& pData)
+		{
+			uint8_t i;
+			*this >> i;
+			pData = i ? true : false;
 			return *this;
 		}
 		//---------------------------------------------------------------------
@@ -239,12 +245,13 @@ namespace Framework
 
 			// Check for fake string size to prevent memory hacks
 			if(size > mBuffer.size() || size == 0)
-				throw std::out_of_range("String size > packet size");
+			{
+				std::ostringstream os;
+				os << "String size (" << size << ") > packet size (" << mBuffer.size() << ")";
+				throw std::out_of_range(os.str());
+			}
 
 			pData = mBuffer.substr(0,size);
-
-			if(pData[size - 1] == 0)
-				pData.pop_back();
 
 			pData.shrink_to_fit();
 

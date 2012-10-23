@@ -27,6 +27,8 @@ namespace Game
 
 	void GameServer::Update()
 	{
+		gomDatabase->Update();
+
 		if(mTransactionFullTimer.elapsed() > 0.1)
 		{
 			GOMVisitor visitor;
@@ -73,9 +75,9 @@ namespace Game
 		return cellSize;
 	}
 
-	GOMDatabase& GameServer::GetGOMDatabase() const
+	GOMDatabase* GameServer::GetGOMDatabase() const
 	{
-		return *gomDatabase.get();
+		return gomDatabase.get();
 	}
 
 	void GameServer::OnConnection(Framework::Network::TcpConnection::pointer pConnection)

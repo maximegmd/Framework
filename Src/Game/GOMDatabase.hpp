@@ -21,6 +21,14 @@ namespace Game
 
 		IGOMServer* Get(uint32_t key);
 
+		template <class T>
+		T* Get()
+		{
+			return reinterpret_cast<T*>(Get(T::kGroupKey));
+		}
+
+		void Update();
+
 		void VisitAll(uint32_t key, GOMVisitor& op);
 		void VisitDirty(uint32_t key, uint32_t pType, GOMVisitor& op);
 

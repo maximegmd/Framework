@@ -2,15 +2,20 @@
 
 namespace Game
 {
-	void IGOMEntry::SetDirty(bool dirty){
-		if(dirty){
+	void IGOMEntry::SetDirty(bool dirty)
+	{
+		if(dirty)
+		{
 			flags |= kDirty;
-			Synchronize();
 		}
-		else flags &= ~kDirty;
+		else
+		{
+			flags &= ~kDirty;
+		}
 	}
 
-	bool IGOMEntry::IsDirty(){
+	bool IGOMEntry::IsDirty()
+	{
 		return flags & kDirty;
 	}
 }

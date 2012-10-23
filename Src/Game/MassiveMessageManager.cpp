@@ -144,10 +144,10 @@ namespace Game
 		return host;
 	}
 
-	GOMDatabase& MassiveMessageManager::GetGOMDatabase() const
+	GOMDatabase* MassiveMessageManager::GetGOMDatabase() const
 	{
 		if(gomDatabase)
-			return *gomDatabase;
+			return gomDatabase.get();
 		return gameServer->GetGOMDatabase();
 	}
 }

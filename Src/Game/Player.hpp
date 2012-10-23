@@ -33,6 +33,8 @@ namespace Game
 		 * @param server The GameServer associated with the Player, nullptr if none.
 		 */
 		Player(KeyType id, GameServer* server = nullptr);
+
+		virtual ~Player();
 		/**
 		 * @brief Set the connection associated with the player.
 		 * @param pConnection The connection associated with the player.
@@ -45,6 +47,8 @@ namespace Game
 		KeyType GetKey() const;
 
 		bool Synchronized() const;
+
+		void SendAwareness();
 
 	protected:
 
@@ -70,7 +74,7 @@ namespace Game
 		 * @brief Send a replication transaction to the client.
 		 * @param gomServer The GOM server to replicate.
 		 */
-		void SendReplicationTransaction(Game::GOMDatabase& gomServer);
+		void SendReplicationTransaction(Game::GOMDatabase* gomServer);
 		/**
 		 * @brief Pump the events.
 		 */
@@ -82,12 +86,16 @@ namespace Game
 		 * @param handler The handler to use.
 		 */
 		template <class T>
-		static void Register(uint32_t opcode, void (T::*handler)(Framework::Network::Packet& pPacket))
+		static void Register(int32_t opcode, void (T::*handler)(Framework::Network::Packet& pPacket))
 		{
-			handlers[opcode] = (PacketHandler)handler;
+			RegisterImpl(opcode, (PacketHandler)handler);
 		}
 
+		GameServer* gameServer;
+
 	private:
+
+		static void RegisterImpl(int32_t opcode, PacketHandler handler);
 
 		void HandleReplicationTransaction(Framework::Network::Packet& pPacket);
 		void HandleHandshake(Framework::Network::Packet& pPacket);
@@ -96,9 +104,9 @@ namespace Game
 
 		bool synchronized;
 		KeyType key;
-		GameServer* gameServer;
+		
 		Framework::Network::TcpConnection::pointer connection;
 
-		static std::map<uint32_t, PacketHandler> handlers;
+		static std::map<int32_t, PacketHandler> handlers;
 	};
 }

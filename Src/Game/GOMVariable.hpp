@@ -18,9 +18,8 @@ namespace Game
 		 * @param g The getter functor.
 		 */
 		GOMVariable(Getter g)
-			:getter(g)
+			:getter(g),a(T())
 		{
-			a = getter();
 		}
 		/**
 		 * @brief Checks if the current state and previous state mismatch, they do, sets the GOM Entry to dirty.

@@ -2,14 +2,25 @@
 #include <Game/GameServer.hpp>
 
 #include <System/Log.h>
+#include <System/Tools.h>
 
 namespace Game
 {
-	std::map<uint32_t, Player::PacketHandler> Player::handlers;
+	std::map<int32_t, Player::PacketHandler> Player::handlers;
+
+	void Player::RegisterImpl(int32_t opcode, PacketHandler handler)
+	{
+		handlers[opcode] = handler;
+	}
 
 	Player::Player(Player::KeyType key, GameServer* server)
 		: key(key), gameServer(server), synchronized(false)
 	{
+	}
+
+	Player::~Player()
+	{
+
 	}
 
 	void Player::SetConnection(Framework::Network::TcpConnection::pointer pConnection)
@@ -51,6 +62,9 @@ namespace Game
 						case kSynchronize:
 							HandleSynchronize(data);
 							break;
+						case kAwareness:
+							HandleAwareness(data);
+							break;
 						case kReplicationTransaction:
 							HandleReplicationTransaction(data);
 							break;
@@ -73,7 +87,9 @@ namespace Game
 				}
 				catch(std::exception& e)
 				{
-					Framework::System::Log::Error(e.what());
+					std::ostringstream os;
+					os << e.what() << " opcode : " << Framework::System::IntToString(data.Opcode) << std::endl;
+					Framework::System::Log::Error(os.str());
 				}
 			}
 	}
