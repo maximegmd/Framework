@@ -96,6 +96,9 @@ namespace Game
 
 	void Player::Write(Framework::Network::Packet& pPacket)
 	{
+		if(!connection)
+			return; 
+
 		pPacket.ObjectId = this->key;
 		auto str = Serialize(pPacket);
 		connection->Write(str);

@@ -148,25 +148,25 @@ namespace Game
 		 */
 		void VisitDirty(GOMVisitor& op, uint32_t pType)
 		{
-			if(pType & kTransactionFull)
+			if(pType & kTransactionPartial)
 			{
-				for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor)
+				for(auto itor = replicationMap[kTransactionPartial].begin(), end = replicationMap[kTransactionPartial].end(); itor != end; ++itor)
 				{
 					if(itor->second->IsDirty())
 					{
-						op(GetGroup(), itor->first, 2, itor->second.get());
+						op(GetGroup(), itor->first, kTransactionPartial, itor->second.get());
 						itor->second->SetDirty(false);
 					}
 				}
 			}
 
-			if(pType & kTransactionPartial)
+			if(pType & kTransactionFull)
 			{
-				for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor)
+				for(auto itor = replicationMap[kTransactionFull].begin(), end = replicationMap[kTransactionFull].end(); itor != end; ++itor)
 				{
 					if(itor->second->IsDirty())
 					{
-						op(GetGroup(), itor->first, 1, itor->second.get());
+						op(GetGroup(), itor->first, kTransactionFull, itor->second.get());
 						itor->second->SetDirty(false);
 					}
 				}
