@@ -16,14 +16,13 @@ namespace Framework
 		//---------------------------------------------------------------------
 		void Server::Scale()
 		{
-			unsigned int logicThreads = 1;
+			unsigned int logicThreads = boost::thread::hardware_concurrency();
 
-			mIoPool.reset(new IoServicePool(1));
+			mIoPool.reset(new IoServicePool(logicThreads));
 			mAcceptor.reset(new boost::asio::ip::tcp::acceptor(mIoPool->GetIoService(), tcp::endpoint(tcp::v4(), mPort)));
 
 			System::Log::Print("Server started : 0.0.0.0:" + std::to_string((unsigned long long)mPort));
-			System::Log::Print("Running with : - 1 Network thread(s) ");
-			System::Log::Print("               - " + std::to_string((unsigned long long)logicThreads) + " Logic thread(s)");
+			System::Log::Print("Running with : " + std::to_string((unsigned long long)logicThreads) + " Network thread(s)");
 			System::Log::Print("");
 		}
 		//---------------------------------------------------------------------
