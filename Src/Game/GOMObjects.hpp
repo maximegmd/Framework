@@ -23,7 +23,7 @@ namespace Game
 		GOMState(int32_t id, int32_t state, IGOMEntry* gomEntry);
 
 		int32_t id, state;
-		IGOMEntry* gomEntry;	
+		IGOMEntry* gomEntry;
 		bool full;
 
 		friend Framework::Network::Packet& operator<<(Framework::Network::Packet& pPacket, const GOMState& state);
@@ -32,7 +32,7 @@ namespace Game
 	struct GOMStateRaw
 	{
 		int32_t id, state;
-		std::string data;	
+		std::string data;
 
 		friend Framework::Network::Packet& operator>>(Framework::Network::Packet& pPacket, GOMStateRaw& state);
 	};
@@ -47,6 +47,7 @@ namespace Game
 		 * @return
 		 */
 		void operator()(int32_t type, int32_t id, int32_t state, IGOMEntry* gomEntry);
+		void operator()(int32_t type, int32_t id);
 
 		template <class Op>
 		void apply(Op& op)
@@ -55,6 +56,7 @@ namespace Game
 				std::for_each(itor->second.begin(), itor->second.end(), op);
 		}
 
-		std::map<uint32_t, std::list<GOMState> > gomEntries;
+		std::map<int32_t, std::list<GOMState> > gomEntries;
+		std::map<int32_t, std::list<uint32_t> > gomDeleted;
 	};
 }

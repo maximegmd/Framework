@@ -20,13 +20,13 @@ namespace Game
 
 	Player::~Player()
 	{
-
 	}
 
 	void Player::SetConnection(Framework::Network::TcpConnection::pointer pConnection)
 	{
 		connection = pConnection;
 		connection->SetStrategy(this);
+		connection->OnError.connect(boost::bind(&Player::OnError, this, _1));
 	}
 
 	Player::KeyType Player::GetKey() const
@@ -97,7 +97,7 @@ namespace Game
 	void Player::Write(Framework::Network::Packet& pPacket)
 	{
 		if(!connection)
-			return; 
+			return;
 
 		pPacket.ObjectId = this->key;
 		auto str = Serialize(pPacket);
@@ -129,5 +129,11 @@ namespace Game
 	void Player::HandleSynchronize(Framework::Network::Packet& pPacket)
 	{
 		this->key = pPacket.ObjectId;
+	}
+
+	void Player::OnError(const std::string& pError)
+	{
+		if(gameServer)
+			gameServer->Remove(this);
 	}
 }

@@ -50,6 +50,8 @@ namespace Game
 
 		void SendAwareness();
 
+		void OnError(const std::string&);
+
 	protected:
 
 		friend class MassiveMessageManager;
@@ -104,7 +106,7 @@ namespace Game
 
 		bool synchronized;
 		KeyType key;
-		
+
 		Framework::Network::TcpConnection::pointer connection;
 
 		static std::map<int32_t, PacketHandler> handlers;

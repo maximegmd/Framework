@@ -44,12 +44,14 @@ namespace Game
 			mTransactionPartialTimer.restart();
 		}
 
+		boost::mutex::scoped_lock _(lock);
 		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
 			itor->second->Update();
 	}
 
 	void GameServer::SendMessageAll(Framework::Network::Packet& pPacket)
 	{
+		boost::mutex::scoped_lock _(lock);
 		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
 		{
 			itor->second->Write(pPacket);
@@ -58,6 +60,7 @@ namespace Game
 
 	void GameServer::SendMessageAllSynchronized(Framework::Network::Packet& pPacket)
 	{
+		boost::mutex::scoped_lock _(lock);
 		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
 		{
 			if(itor->second->Synchronized())
@@ -82,6 +85,8 @@ namespace Game
 
 	void GameServer::OnConnection(Framework::Network::TcpConnection::pointer pConnection)
 	{
+		boost::mutex::scoped_lock _(lock);
+
 		Player::KeyType key;
 		std::random_device rd;
 		do{
@@ -98,6 +103,17 @@ namespace Game
 		players[key] = player;
 	}
 
+	void GameServer::Remove(Player* player)
+	{
+		boost::mutex::scoped_lock _(lock);
+		auto itor = players.find(player->GetKey());
+		if(itor != players.end())
+		{
+			players.erase(itor);
+			delete player;
+		}
+	}
+
 	void GameServer::SendReplicationTransaction(GOMVisitor& visitor)
 	{
 		// Don't send if we have nothing to send...
@@ -109,6 +125,7 @@ namespace Game
 		Framework::Network::Packet packet(Player::kReplicationTransaction);
 
 		packet << visitor.gomEntries;
+		packet << visitor.gomDeleted;
 
 		SendMessageAllSynchronized(packet);
 	}

@@ -28,4 +28,9 @@ namespace Game
 	{
 		gomEntries[type].push_back(GOMState(id, state, accessor));
 	}
+
+	void GOMVisitor::operator()(int32_t type, int32_t id)
+	{
+		gomDeleted[type].push_back(id);
+	}
 }

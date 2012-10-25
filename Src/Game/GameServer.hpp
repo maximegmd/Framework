@@ -68,6 +68,8 @@ namespace Game
 		 */
 		void OnConnection(Framework::Network::TcpConnection::pointer pConnection);
 
+		void Remove(Player*);
+
 	private:
 
 		void SendReplicationTransaction(GOMVisitor& visitor);
@@ -81,6 +83,8 @@ namespace Game
 		boost::timer mTransactionPartialTimer;
 
 		int cellSize;
+
+		boost::mutex				lock;
 
 		friend class MassiveMessageManager;
 

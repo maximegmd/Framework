@@ -13,7 +13,9 @@ namespace Game
 
 		visitor.apply([](GOMState& state){state.full = true;});
 
+		packet << (bool)true;
 		packet << visitor.gomEntries;
+		packet << visitor.gomDeleted;
 
 		Write(packet);
 

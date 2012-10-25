@@ -12,12 +12,17 @@ namespace Game
 
 		virtual ~IGOMServer()
 		{
-
 		}
 		/**
 		 * @brief Will query each GOM Entry to see if it's dirty or not.
 		 */
 		virtual void Update() = 0;
+		/**
+		 * @brief Remove a GOM Entry from the GOM Server.
+		 * @param state The GOM entry's replication state.
+		 * @param id The GOM entry's id.
+		 */
+		virtual void Remove(int32_t state, int32_t id);
 		/**
 		 * @brief Get the GOM Server's type.
 		 * @return The GOM Server's type.
@@ -45,6 +50,7 @@ namespace Game
 
 	enum
 	{
+		kTransactionNone = 0,
 		kTransactionFull = 1 << 0,
 		kTransactionPartial = 1 << 1,
 		kAllTransactions = (1 << 2) - 1
@@ -119,6 +125,7 @@ namespace Game
 		 */
 		void Remove(int32_t state, int32_t id)
 		{
+			removedIds.push_back(id);
 			DoRemove(state, id);
 		}
 		/**
@@ -171,6 +178,10 @@ namespace Game
 					}
 				}
 			}
+
+			for(auto itor = removedIds.begin(), end = removedIds.end(); itor != end; ++itor)
+				op(GetGroup(), *itor);
+			removedIds.clear();
 		}
 
 	protected:
@@ -181,5 +192,6 @@ namespace Game
 
 		int32_t							replicationId;
 		std::map<int32_t, std::shared_ptr<EntryType> >    replicationMap[3];
+		std::list<int32_t>				removedIds;
 	};
 }
