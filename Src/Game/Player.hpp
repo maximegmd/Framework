@@ -24,7 +24,8 @@ namespace Game
 			kAwareness = 'awar'
 		};
 
-		typedef int32_t KeyType;
+		typedef int KeyType;
+		typedef void (Player::*PacketHandler)(Framework::Network::Packet& pPacket);
 
 		/**
 		 * @brief Constructs a Player.
@@ -32,6 +33,8 @@ namespace Game
 		 * @param server The GameServer associated with the Player, nullptr if none.
 		 */
 		Player(KeyType id, GameServer* server = nullptr);
+
+		virtual ~Player();
 		/**
 		 * @brief Set the connection associated with the player.
 		 * @param pConnection The connection associated with the player.
@@ -44,6 +47,8 @@ namespace Game
 		KeyType GetKey() const;
 
 		bool Synchronized() const;
+
+		void SendAwareness();
 
 	protected:
 
@@ -69,13 +74,28 @@ namespace Game
 		 * @brief Send a replication transaction to the client.
 		 * @param gomServer The GOM server to replicate.
 		 */
-		void SendReplicationTransaction(Game::GOMDatabase& gomServer);
+		void SendReplicationTransaction(Game::GOMDatabase* gomServer);
 		/**
 		 * @brief Pump the events.
 		 */
 		void Update();
 
+		/**
+		 * @brief Register a handler to an opcode.
+		 * @param opcode The opcode.
+		 * @param handler The handler to use.
+		 */
+		template <class T>
+		static void Register(int32_t opcode, void (T::*handler)(Framework::Network::Packet& pPacket))
+		{
+			RegisterImpl(opcode, (PacketHandler)handler);
+		}
+
+		GameServer* gameServer;
+
 	private:
+
+		static void RegisterImpl(int32_t opcode, PacketHandler handler);
 
 		void HandleReplicationTransaction(Framework::Network::Packet& pPacket);
 		void HandleHandshake(Framework::Network::Packet& pPacket);
@@ -84,7 +104,9 @@ namespace Game
 
 		bool synchronized;
 		KeyType key;
-		GameServer* gameServer;
+		
 		Framework::Network::TcpConnection::pointer connection;
+
+		static std::map<int32_t, PacketHandler> handlers;
 	};
 }

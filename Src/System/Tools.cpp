@@ -130,19 +130,13 @@ namespace Framework
 		//---------------------------------------------------------------------
 		std::string IntToString(unsigned int pValue)
 		{
-			std::stringstream out;
-			out << std::hex << pValue;
-			std::string mTemp = out.str();
+			std::ostringstream os;
+			os << (char)((pValue >> 24) & 0xFF);
+			os << (char)((pValue >> 16) & 0xFF);
+			os << (char)((pValue >> 8) & 0xFF);
+			os << (char)(pValue & 0xFF);
 
-			std::ostringstream outputStream;
-			for(size_t i = 0; i + 1 <= mTemp.size(); i += 2)
-			{
-				unsigned short s;
-				std::istringstream(mTemp.substr(i, 2)) >> hex >> s;
-				outputStream << static_cast<unsigned char>(s);
-			}
-
-			return outputStream.str();
+			return os.str();
 		}
 		//---------------------------------------------------------------------
 	}

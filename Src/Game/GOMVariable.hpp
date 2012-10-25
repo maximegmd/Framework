@@ -11,16 +11,15 @@ namespace Game
 	struct GOMVariable
 	{
 		typedef typename T type;
-		typedef std::function<const type&()>		Getter;
+		typedef std::function<type()>		Getter;
 
 		/**
 		 * @brief Constructs a GOM Variable with a getter.
 		 * @param g The getter functor.
 		 */
 		GOMVariable(Getter g)
-			:getter(g)
+			:getter(g),a(T())
 		{
-			a = getter();
 		}
 		/**
 		 * @brief Checks if the current state and previous state mismatch, they do, sets the GOM Entry to dirty.
@@ -48,7 +47,7 @@ namespace Game
 		 * @brief Gets the current value of the GOM variable.
 		 * @return The current value.
 		 */
-		const T& get() const{
+		T get() const{
 			return getter();
 		}
 

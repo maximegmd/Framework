@@ -9,6 +9,10 @@ namespace Game
 	{
 	public:
 
+		virtual ~IGOMEntry()
+		{
+		}
+
 		enum
 		{
 			kDirty = 1 << 0
@@ -34,12 +38,20 @@ namespace Game
 		 * @param pFull Returns whether or not the serialization should be complete.
 		 * @return The raw serialized data.
 		 */
-		virtual std::string Serialize(bool pFull) const = 0;
+		std::string Serialize(bool pFull)
+		{
+			std::string data = DoSerialize(pFull);
+			Synchronize();
+			return data;
+		}
 		/**
 		 * @brief Deserializes the GOM Entry's state.
 		 * @param plainData The serialized raw data.
 		 */
-		virtual void Deserialize(const std::string& plainData) = 0;
+		void Deserialize(const std::string& plainData)
+		{
+			DoDeserialize(plainData);
+		}
 
 		/**
 		 * @brief Sets whether or not the GOM Entry is dirty.
@@ -48,6 +60,9 @@ namespace Game
 		void SetDirty(bool dirty);
 
 	protected:
+
+		virtual std::string DoSerialize(bool pFull) const = 0;
+		virtual void DoDeserialize(const std::string& plainData) = 0;
 
 		template <class T>
 		friend struct GOMVariable;
@@ -62,18 +77,25 @@ namespace Game
 	{
 	public:
 
+
+		typedef typename Model Type;
 		/**
 		 * @brief Constructs a GOM Entry with its associated Model.
 		 * @param m The Model to store.
 		 */
-		GOMEntry(Model* m) 
-			: model(m)
+		GOMEntry(Type* d) 
+			: data(d)
+		{
+			SetDirty(false);
+		}
+
+		virtual ~GOMEntry()
 		{
 		}
 
 	protected:
 
-		Model* model;
+		Type* data;
 	};
 
 

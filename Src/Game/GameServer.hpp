@@ -60,7 +60,7 @@ namespace Game
 		 * @brief Obtain the GOM Server associated with the GameServer.
 		 * @return The GOM Server.
 		 */
-		GOMDatabase& GetGOMDatabase() const;
+		GOMDatabase* GetGOMDatabase() const;
 
 		/**
 		 * @brief Callback handling new client connections to the GameServer.

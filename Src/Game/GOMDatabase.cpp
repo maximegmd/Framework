@@ -11,6 +11,14 @@ namespace Game
 		}
 	}
 
+	void GOMDatabase::Update()
+	{
+		for(auto itor = gomServers.begin(), end = gomServers.end(); itor != end; ++itor)
+		{
+			itor->second->Update();
+		}
+	}
+
 	void GOMDatabase::VisitAll(uint32_t key, GOMVisitor& op)
 	{
 		if(key == kAllGOMServers)

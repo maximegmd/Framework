@@ -112,12 +112,7 @@ namespace Game
 		}
 	}
 
-	void MassiveMessageManager::SendMessageAll(Framework::Network::Packet& pPacket)
-	{
-		SendMessage(kPlayerAll, pPacket);
-	}
-
-	void MassiveMessageManager::SendMessage(Player::KeyType pKey, Framework::Network::Packet& pPacket)
+	void MassiveMessageManager::SendMessageTo(int pKey, Framework::Network::Packet& pPacket)
 	{
 		if(localPlayer)
 		{
@@ -139,15 +134,20 @@ namespace Game
 		}
 	}
 
+	void MassiveMessageManager::SendMessageAll(Framework::Network::Packet& pPacket)
+	{
+		SendMessageTo(kPlayerAll, pPacket);
+	}
+
 	bool MassiveMessageManager::Server()
 	{
 		return host;
 	}
 
-	GOMDatabase& MassiveMessageManager::GetGOMDatabase() const
+	GOMDatabase* MassiveMessageManager::GetGOMDatabase() const
 	{
 		if(gomDatabase)
-			return *gomDatabase;
+			return gomDatabase.get();
 		return gameServer->GetGOMDatabase();
 	}
 }
