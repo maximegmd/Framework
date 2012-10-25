@@ -117,15 +117,25 @@ namespace Game
 	void GameServer::SendReplicationTransaction(GOMVisitor& visitor)
 	{
 		// Don't send if we have nothing to send...
-		if(visitor.gomEntries.empty())
+		if(visitor.gomEntries.empty() && visitor.gomDeleted.empty())
 			return;
-
-		Framework::System::Log::Debug("Send replication transaction");
 
 		Framework::Network::Packet packet(Player::kReplicationTransaction);
 
-		packet << visitor.gomEntries;
-		packet << visitor.gomDeleted;
+		uint8_t flags = 0;
+		packet << flags;
+		if(visitor.gomEntries.size())
+		{
+			flags |= kReplicationUpdate;
+			packet << visitor.gomEntries;
+		}
+		if(visitor.gomDeleted.size())
+		{
+			flags |= kReplicationRemove;
+			packet << visitor.gomDeleted;
+		}
+
+		packet.Write(&flags, 1, 0);
 
 		SendMessageAllSynchronized(packet);
 	}

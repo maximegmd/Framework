@@ -13,6 +13,11 @@ namespace Game
 		kPlayerAll = -1,
 	};
 
+	enum{
+		kReplicationUpdate = 1<<0,
+		kReplicationRemove = 1<<1
+	};
+
 	class GameServer;
 	class Player : public Framework::Network::NinjatoStrategy
 	{

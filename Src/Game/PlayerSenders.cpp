@@ -13,9 +13,20 @@ namespace Game
 
 		visitor.apply([](GOMState& state){state.full = true;});
 
-		packet << (bool)true;
-		packet << visitor.gomEntries;
-		packet << visitor.gomDeleted;
+		uint8_t flags = 0;
+		packet << flags;
+		if(visitor.gomEntries.size())
+		{
+			flags |= kReplicationUpdate;
+			packet << visitor.gomEntries;
+		}
+		if(visitor.gomDeleted.size())
+		{
+			flags |= kReplicationRemove;
+			packet << visitor.gomDeleted;
+		}
+		
+		packet.Write(&flags, 1, 0);
 
 		Write(packet);
 
