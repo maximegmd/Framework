@@ -1,13 +1,13 @@
 #include "GameServer.hpp"
 #include <random>
 #include <System/Log.h>
+#include <Game/MassiveMessageManager.hpp>
 
 namespace Game
 {
 	GameServer::GameServer(short port, GameServer::PlayerConstructor playerCtor, GameServer::GOMServerConstructor gomCtor)
-		:playerContructor(playerCtor), gomServerConstructor(gomCtor)
+		:playerContructor(playerCtor)
 	{
-		gomDatabase.reset(new GOMDatabase(gomServerConstructor(0)));
 		server.reset(new Framework::Network::Server(port));
 		server->OnConnection.connect(boost::bind(&GameServer::OnConnection, this, _1));
 		server->Start();
@@ -27,19 +27,19 @@ namespace Game
 
 	void GameServer::Update()
 	{
-		gomDatabase->Update();
+		TheMassiveMessageMgr->GetGOMDatabase()->Update();
 
 		if(mTransactionFullTimer.elapsed() > 0.1)
 		{
 			GOMVisitor visitor;
-			gomDatabase->VisitDirty(GOMDatabase::kAllGOMServers, kTransactionFull, visitor);
+			TheMassiveMessageMgr->GetGOMDatabase()->VisitDirty(GOMDatabase::kAllGOMServers, kTransactionFull, visitor);
 			SendReplicationTransaction(visitor);
 			mTransactionFullTimer.restart();
 		}
 		else if(mTransactionPartialTimer.elapsed() > 1.0)
 		{
 			GOMVisitor visitor;
-			gomDatabase->VisitDirty(GOMDatabase::kAllGOMServers, kTransactionPartial, visitor);
+			TheMassiveMessageMgr->GetGOMDatabase()->VisitDirty(GOMDatabase::kAllGOMServers, kTransactionPartial, visitor);
 			SendReplicationTransaction(visitor);
 			mTransactionPartialTimer.restart();
 		}
@@ -76,11 +76,6 @@ namespace Game
 	int GameServer::GetCellSize() const
 	{
 		return cellSize;
-	}
-
-	GOMDatabase* GameServer::GetGOMDatabase() const
-	{
-		return gomDatabase.get();
 	}
 
 	void GameServer::OnConnection(Framework::Network::TcpConnection::pointer pConnection)
@@ -131,6 +126,7 @@ namespace Game
 		}
 		if(visitor.gomDeleted.size())
 		{
+			Framework::System::Log::Debug("Sending removal");
 			flags |= kReplicationRemove;
 			packet << visitor.gomDeleted;
 		}

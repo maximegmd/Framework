@@ -48,50 +48,50 @@ namespace Game
 
 	void Player::Update()
 	{
-		if(connection)
-			while(HasPacket())
+		while(HasPacket())
+		{
+			Framework::Network::Packet data = PopPacket();
+			try
 			{
-				Framework::Network::Packet data = PopPacket();
-				try
+				switch(data.Type)
 				{
-					switch(data.Type)
+				case Framework::Network::Packet::kMessage:
+					switch(data.Opcode)
 					{
-					case Framework::Network::Packet::kMessage:
-						switch(data.Opcode)
-						{
-						case kSynchronize:
-							HandleSynchronize(data);
-							break;
-						case kAwareness:
-							HandleAwareness(data);
-							break;
-						case kReplicationTransaction:
-							HandleReplicationTransaction(data);
-							break;
-						default:
-							(this->*handlers.at(data.Opcode))(data);
-							break;
-						}
+					case kSynchronize:
+						HandleSynchronize(data);
 						break;
-					case Framework::Network::Packet::kHandshake:
-						HandleHandshake(data);
+					case kAwareness:
+						HandleAwareness(data);
+						break;
+					case kReplicationTransaction:
+						HandleReplicationTransaction(data);
 						break;
 					default:
-						connection->Close();
+						(this->*handlers.at(data.Opcode))(data);
 						break;
 					}
-				}
-				catch(boost::exception& e)
-				{
-					Framework::System::Log::Error(boost::diagnostic_information(e));
-				}
-				catch(std::exception& e)
-				{
-					std::ostringstream os;
-					os << e.what() << " opcode : " << Framework::System::IntToString(data.Opcode) << std::endl;
-					Framework::System::Log::Error(os.str());
+					break;
+				case Framework::Network::Packet::kHandshake:
+					HandleHandshake(data);
+					break;
+				default:
+					if(connection)
+						connection->Close();
+					break;
 				}
 			}
+			catch(boost::exception& e)
+			{
+				Framework::System::Log::Error(boost::diagnostic_information(e));
+			}
+			catch(std::exception& e)
+			{
+				std::ostringstream os;
+				os << e.what() << " opcode : " << Framework::System::IntToString(data.Opcode) << std::endl;
+				Framework::System::Log::Error(os.str());
+			}
+		}
 	}
 
 	void Player::Write(Framework::Network::Packet& pPacket)

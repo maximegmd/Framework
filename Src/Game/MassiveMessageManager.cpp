@@ -50,17 +50,18 @@ namespace Game
 		}
 
 		host = pHost;
-		//if(host)
+		gomDatabase.reset(new GOMDatabase(gomConstructor(nullptr)));	
+
+		Player* player = playerConstructor ? playerConstructor(kPlayerSelf, nullptr) : new Player(kPlayerSelf);
+		localPlayer.reset(player);
+
+		if(host)
 		{
 			gameServer.reset(nullptr);
 			gameServer.reset(new GameServer(port, playerConstructor, gomConstructor));
 		}
-		//else
+		else
 		{
-			gomDatabase.reset(new GOMDatabase(gomConstructor(nullptr)));	
-			Player* player = playerConstructor ? playerConstructor(kPlayerSelf, nullptr) : new Player(kPlayerSelf);
-			localPlayer.reset(player);
-
 			ioServicePool.Run();
 			connection.reset(::new Framework::Network::TcpConnection(ioServicePool.GetIoService()));
 			Connect(address, std::to_string((long long)port));
@@ -118,7 +119,10 @@ namespace Game
 		{
 			if(pKey == kPlayerServer)
 			{
-				localPlayer->Write(pPacket);
+				if(Server())
+					localPlayer->ReceivePacket(pPacket);
+				else
+					localPlayer->Write(pPacket);
 			}
 			else if(pKey == kPlayerSelf)
 			{
@@ -130,7 +134,7 @@ namespace Game
 			if(gameServer)
 				gameServer->SendMessageAll(pPacket);
 			if(localPlayer)
-				localPlayer->Write(pPacket);
+				localPlayer->ReceivePacket(pPacket);
 		}
 	}
 
@@ -148,6 +152,6 @@ namespace Game
 	{
 		if(gomDatabase)
 			return gomDatabase.get();
-		return gameServer->GetGOMDatabase();
+		return nullptr;
 	}
 }

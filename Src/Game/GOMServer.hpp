@@ -22,7 +22,7 @@ namespace Game
 		 * @param state The GOM entry's replication state.
 		 * @param id The GOM entry's id.
 		 */
-		virtual void Remove(int32_t state, int32_t id);
+		virtual void Remove(int32_t state, int32_t id) = 0;
 		/**
 		 * @brief Get the GOM Server's type.
 		 * @return The GOM Server's type.
@@ -123,7 +123,7 @@ namespace Game
 		 * @param state The GOM entry's replication state.
 		 * @param id The GOM entry's id.
 		 */
-		void Remove(int32_t state, int32_t id)
+		void Remove(int32_t state, int32_t id) override
 		{
 			removedIds.push_back(id);
 			DoRemove(state, id);

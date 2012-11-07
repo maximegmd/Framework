@@ -57,12 +57,6 @@ namespace Game
 		int GetCellSize() const;
 
 		/**
-		 * @brief Obtain the GOM Server associated with the GameServer.
-		 * @return The GOM Server.
-		 */
-		GOMDatabase* GetGOMDatabase() const;
-
-		/**
 		 * @brief Callback handling new client connections to the GameServer.
 		 * @param pConnection The new connection.
 		 */
@@ -77,7 +71,6 @@ namespace Game
 		std::map<Player::KeyType, Player*> players;
 
 		std::unique_ptr<Framework::Network::Server>			server;
-		std::unique_ptr<GOMDatabase>						gomDatabase;
 
 		boost::timer mTransactionFullTimer;
 		boost::timer mTransactionPartialTimer;
@@ -89,6 +82,5 @@ namespace Game
 		friend class MassiveMessageManager;
 
 		PlayerConstructor		playerContructor;
-		GOMServerConstructor	gomServerConstructor;
 	};
 }

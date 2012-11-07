@@ -90,7 +90,7 @@ namespace Game
 		void OnConnect(bool pConnected);
 
 		
-		GameServer::PlayerConstructor playerConstructor;
+		GameServer::PlayerConstructor    playerConstructor;
 		GameServer::GOMServerConstructor gomConstructor;
 
 		std::unique_ptr<Player> localPlayer;

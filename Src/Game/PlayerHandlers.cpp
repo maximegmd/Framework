@@ -10,13 +10,11 @@ namespace Game
 		os << "\nReplication Transaction Log\n\n";
 
 		uint8_t flags = 0;
-		std::map<int32_t, std::list<GOMStateRaw> > states;
-		std::map<int32_t, std::list<int32_t> > deleted;
-
 		pPacket >> flags;
 
 		if(flags & kReplicationUpdate)
 		{
+			std::map<int32_t, std::list<GOMStateRaw> > states;
 			pPacket >> states;
 
 			os << "\tUpdate Transaction :";
@@ -33,6 +31,9 @@ namespace Game
 		}
 		if(flags & kReplicationRemove)
 		{
+			std::map<int32_t, std::list<uint32_t> > deleted;
+			pPacket >> deleted;
+		
 			os << "\tDelete transaction :";
 			for(auto itor = deleted.begin(), end = deleted.end(); itor != end; ++itor)
 			{
@@ -48,11 +49,11 @@ namespace Game
 				}
 			}
 		}
-		Framework::System::Log::Print(os.str());
+		//Framework::System::Log::Print(os.str());
 	}
 
 	void Player::HandleAwareness(Framework::Network::Packet& pPacket)
 	{
-		SendReplicationTransaction(gameServer->GetGOMDatabase());
+		SendReplicationTransaction(TheMassiveMessageMgr->GetGOMDatabase());
 	}
 }
