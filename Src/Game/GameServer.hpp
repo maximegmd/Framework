@@ -62,25 +62,28 @@ namespace Game
 		 */
 		void OnConnection(Framework::Network::TcpConnection::pointer pConnection);
 
-		void Remove(Player*);
+		/**
+		 * @brief Remove a player from the server.
+		 * @param pPlayer The player to remove.
+		 */
+		void Remove(Player* pPlayer);
 
 	private:
 
 		void SendReplicationTransaction(GOMVisitor& visitor);
 
-		std::map<Player::KeyType, Player*> players;
-
-		std::unique_ptr<Framework::Network::Server>			server;
+		std::unique_ptr<Framework::Network::Server>			mServer;
 
 		boost::timer mTransactionFullTimer;
 		boost::timer mTransactionPartialTimer;
 
-		int cellSize;
+		boost::mutex mLock;
+		std::map<Player::KeyType, Player*> mPlayers;
 
-		boost::mutex				lock;
+		int mCellSize;
 
 		friend class MassiveMessageManager;
 
-		PlayerConstructor		playerContructor;
+		PlayerConstructor		mPlayerContructor;
 	};
 }

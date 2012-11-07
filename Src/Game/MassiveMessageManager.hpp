@@ -87,6 +87,8 @@ namespace Game
 
 	private:
 
+		friend class GameServer;
+
 		void OnConnect(bool pConnected);
 
 		

@@ -1,5 +1,6 @@
 #include "Player.hpp"
 #include <Game/GameServer.hpp>
+#include <Game/MassiveMessageManager.hpp>
 
 #include <System/Log.h>
 #include <System/Tools.h>
@@ -24,9 +25,9 @@ namespace Game
 
 	void Player::SetConnection(Framework::Network::TcpConnection::pointer pConnection)
 	{
-		connection = pConnection;
-		connection->SetStrategy(this);
-		connection->OnError.connect(boost::bind(&Player::OnError, this, _1));
+		mConnection = pConnection;
+		mConnection->SetStrategy(this);
+		mConnection->OnError.connect(boost::bind(&Player::OnError, this, _1));
 	}
 
 	Player::KeyType Player::GetKey() const
@@ -37,6 +38,11 @@ namespace Game
 	bool Player::Synchronized() const
 	{
 		return synchronized;
+	}
+
+	bool Player::Local() const
+	{
+		return (gameServer == nullptr);
 	}
 
 	void Player::SendSynchronize()
@@ -76,8 +82,8 @@ namespace Game
 					HandleHandshake(data);
 					break;
 				default:
-					if(connection)
-						connection->Close();
+					if(mConnection)
+						mConnection->Close();
 					break;
 				}
 			}
@@ -96,12 +102,12 @@ namespace Game
 
 	void Player::Write(Framework::Network::Packet& pPacket)
 	{
-		if(!connection)
+		if(!mConnection)
 			return;
 
 		pPacket.ObjectId = this->key;
 		auto str = Serialize(pPacket);
-		connection->Write(str);
+		mConnection->Write(str);
 	}
 
 	void Player::SetCipher(Framework::Crypt::Cipher* pCipher)
@@ -135,5 +141,10 @@ namespace Game
 	{
 		if(gameServer)
 			gameServer->Remove(this);
+	}
+
+	void Player::OnSynchronize()
+	{
+
 	}
 }

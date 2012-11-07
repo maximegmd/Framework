@@ -6,21 +6,21 @@
 namespace Game
 {
 	GameServer::GameServer(short port, GameServer::PlayerConstructor playerCtor, GameServer::GOMServerConstructor gomCtor)
-		:playerContructor(playerCtor)
+		:mPlayerContructor(playerCtor)
 	{
-		server.reset(new Framework::Network::Server(port));
-		server->OnConnection.connect(boost::bind(&GameServer::OnConnection, this, _1));
-		server->Start();
+		mServer.reset(new Framework::Network::Server(port));
+		mServer->OnConnection.connect(boost::bind(&GameServer::OnConnection, this, _1));
+		mServer->Start();
 	}
 
 	GameServer::~GameServer()
 	{
-		server->Stop();
+		mServer->Stop();
 
-		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
+		for(auto itor = mPlayers.begin(), end = mPlayers.end(); itor != end; ++itor)
 			delete itor->second;
 
-		players.clear();
+		mPlayers.clear();
 
 		Framework::System::Log::Debug("GameServer deleted");
 	}
@@ -44,15 +44,15 @@ namespace Game
 			mTransactionPartialTimer.restart();
 		}
 
-		boost::mutex::scoped_lock _(lock);
-		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
+		boost::mutex::scoped_lock _(mLock);
+		for(auto itor = mPlayers.begin(), end = mPlayers.end(); itor != end; ++itor)
 			itor->second->Update();
 	}
 
 	void GameServer::SendMessageAll(Framework::Network::Packet& pPacket)
 	{
-		boost::mutex::scoped_lock _(lock);
-		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
+		boost::mutex::scoped_lock _(mLock);
+		for(auto itor = mPlayers.begin(), end = mPlayers.end(); itor != end; ++itor)
 		{
 			itor->second->Write(pPacket);
 		}
@@ -60,8 +60,8 @@ namespace Game
 
 	void GameServer::SendMessageAllSynchronized(Framework::Network::Packet& pPacket)
 	{
-		boost::mutex::scoped_lock _(lock);
-		for(auto itor = players.begin(), end = players.end(); itor != end; ++itor)
+		boost::mutex::scoped_lock _(mLock);
+		for(auto itor = mPlayers.begin(), end = mPlayers.end(); itor != end; ++itor)
 		{
 			if(itor->second->Synchronized())
 				itor->second->Write(pPacket);
@@ -70,43 +70,32 @@ namespace Game
 
 	void GameServer::SetCellSize(int cellsize)
 	{
-		this->cellSize = cellsize;
+		this->mCellSize = cellsize;
 	}
 
 	int GameServer::GetCellSize() const
 	{
-		return cellSize;
+		return mCellSize;
 	}
 
 	void GameServer::OnConnection(Framework::Network::TcpConnection::pointer pConnection)
 	{
-		boost::mutex::scoped_lock _(lock);
+		boost::mutex::scoped_lock _(mLock);
 
 		Player::KeyType key;
 		std::random_device rd;
 		do{
 			key = rd()%std::numeric_limits<int32_t>::max() + 1;
-		}while(players.find(key) != players.end());
+		}while(mPlayers.find(key) != mPlayers.end() || key == TheMassiveMessageMgr->GetLocalPlayer()->GetKey());
 
-		Player* player = playerContructor ? playerContructor(key, this) : new Player(key, this);
+		Player* player = mPlayerContructor ? mPlayerContructor(key, this) : new Player(key, this);
 		player->SetConnection(pConnection);
 
 		std::ostringstream os;
 		os << "GameServer : New player with key : " << key;
 		Framework::System::Log::Debug(os.str());
 
-		players[key] = player;
-	}
-
-	void GameServer::Remove(Player* player)
-	{
-		boost::mutex::scoped_lock _(lock);
-		auto itor = players.find(player->GetKey());
-		if(itor != players.end())
-		{
-			players.erase(itor);
-			delete player;
-		}
+		mPlayers[key] = player;
 	}
 
 	void GameServer::SendReplicationTransaction(GOMVisitor& visitor)
@@ -134,5 +123,16 @@ namespace Game
 		packet.Write(&flags, 1, 0);
 
 		SendMessageAllSynchronized(packet);
+	}
+
+	void GameServer::Remove(Player* player)
+	{
+		boost::mutex::scoped_lock _(mLock);
+		auto itor = mPlayers.find(player->GetKey());
+		if(itor != mPlayers.end())
+		{
+			mPlayers.erase(itor);
+			delete player;
+		}
 	}
 }

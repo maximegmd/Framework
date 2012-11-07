@@ -53,7 +53,11 @@ namespace Game
 
 		bool Synchronized() const;
 
+		bool Local() const;
+
 		void SendAwareness();
+
+		
 
 		void OnError(const std::string&);
 
@@ -98,6 +102,8 @@ namespace Game
 			RegisterImpl(opcode, (PacketHandler)handler);
 		}
 
+		virtual void OnSynchronize();
+
 		GameServer* gameServer;
 
 	private:
@@ -112,7 +118,7 @@ namespace Game
 		bool synchronized;
 		KeyType key;
 
-		Framework::Network::TcpConnection::pointer connection;
+		Framework::Network::TcpConnection::pointer mConnection;
 
 		static std::map<int32_t, PacketHandler> handlers;
 	};

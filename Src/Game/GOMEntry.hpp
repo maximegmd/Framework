@@ -2,12 +2,18 @@
 
 #include <string>
 #include <functional>
+#include <boost/timer.hpp>
 
 namespace Game
 {
 	class IGOMEntry
 	{
 	public:
+
+		IGOMEntry()
+		{
+			mTimer.restart();
+		}
 
 		virtual ~IGOMEntry()
 		{
@@ -51,6 +57,7 @@ namespace Game
 		void Deserialize(const std::string& plainData)
 		{
 			DoDeserialize(plainData);
+			mTimer.restart();
 		}
 
 		/**
@@ -58,6 +65,11 @@ namespace Game
 		 * @param dirty The dirtiness of the GOM Entry.
 		 */
 		void SetDirty(bool dirty);
+
+		float GetDelta()
+		{
+			return mTimer.elapsed();
+		}
 
 	protected:
 
@@ -69,6 +81,7 @@ namespace Game
 
 	private:
 
+		boost::timer mTimer;
 		unsigned char flags;
 	};
 
@@ -84,7 +97,7 @@ namespace Game
 		 * @param m The Model to store.
 		 */
 		GOMEntry(Type* d) 
-			: data(d)
+			: data(d), IGOMEntry()
 		{
 			SetDirty(false);
 		}
@@ -94,6 +107,7 @@ namespace Game
 		}
 
 	protected:
+
 
 		Type* data;
 	};

@@ -19,6 +19,7 @@ namespace Game
 
 	MassiveMessageManager::~MassiveMessageManager()
 	{
+		
 		localPlayer.reset(nullptr);
 	}
 
@@ -52,20 +53,22 @@ namespace Game
 		host = pHost;
 		gomDatabase.reset(new GOMDatabase(gomConstructor(nullptr)));	
 
-		Player* player = playerConstructor ? playerConstructor(kPlayerSelf, nullptr) : new Player(kPlayerSelf);
+		std::random_device rd;
+		Player::KeyType key = rd()%std::numeric_limits<int32_t>::max() + 1;
+		Player* player = playerConstructor ? playerConstructor(key, nullptr) : new Player(key);
 		localPlayer.reset(player);
 
 		if(host)
 		{
 			gameServer.reset(nullptr);
 			gameServer.reset(new GameServer(port, playerConstructor, gomConstructor));
+			player->OnSynchronize();
 		}
 		else
 		{
 			ioServicePool.Run();
 			connection.reset(::new Framework::Network::TcpConnection(ioServicePool.GetIoService()));
 			Connect(address, std::to_string((long long)port));
-					
 		}
 	}
 
@@ -154,4 +157,6 @@ namespace Game
 			return gomDatabase.get();
 		return nullptr;
 	}
+
+	
 }
