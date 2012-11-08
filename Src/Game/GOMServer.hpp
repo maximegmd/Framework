@@ -74,6 +74,11 @@ namespace Game
 			replicationMap[0].clear();
 		}
 
+		WrappedType* Get(int transaction , int id)
+		{
+			return replicationMap[transaction][id]->GetData();
+		}
+
 		/**
 		 * @brief Will query each GOM Entry to see if it's dirty or not.
 		 */

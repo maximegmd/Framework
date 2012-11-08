@@ -106,6 +106,11 @@ namespace Game
 		{
 		}
 
+		Type* GetData()
+		{
+			return data;
+		}
+
 	protected:
 
 
