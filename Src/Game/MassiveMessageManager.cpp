@@ -133,6 +133,8 @@ namespace Game
 				connectionFailed = true;
 				Framework::System::Log::Debug(std::string("MassiveMessageManager : Connection to ") + address + std::string(":") + to_string((_Longlong)port) + std::string(" failed!"));
 			}
+
+			OnConnection(!connectionFailed);
 		}
 	}
 

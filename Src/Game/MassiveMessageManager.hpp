@@ -102,6 +102,8 @@ namespace Game
 		 */
 		void CancelPendingConnection();
 
+		boost::signal<void(bool)> OnConnection;
+
 	private:
 
 		friend class GameServer;
