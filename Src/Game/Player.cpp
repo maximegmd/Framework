@@ -135,6 +135,7 @@ namespace Game
 	void Player::HandleSynchronize(Framework::Network::Packet& pPacket)
 	{
 		this->key = pPacket.ObjectId;
+		OnSynchronize();
 	}
 
 	void Player::OnError(const std::string& pError)
