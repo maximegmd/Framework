@@ -16,7 +16,7 @@ namespace Game
 		connectionPending(false),
 		connectionFailed(false)
 	{
-		
+		ioServicePool.Run();
 	}
 
 	MassiveMessageManager::~MassiveMessageManager()
@@ -65,6 +65,7 @@ namespace Game
 		Player* player = playerConstructor ? playerConstructor(key, nullptr) : new Player(key);
 		localPlayer.reset(player);
 
+
 		if(host)
 		{
 			gameServer.reset(nullptr);
@@ -73,7 +74,7 @@ namespace Game
 		}
 		else
 		{
-			ioServicePool.Run();
+			
 			connection.reset(::new Framework::Network::TcpConnection(ioServicePool.GetIoService()));
 			Connect(address, std::to_string((long long)port));
 		}
@@ -178,6 +179,11 @@ namespace Game
 		if(gomDatabase)
 			return gomDatabase.get();
 		return nullptr;
+	}
+
+	Framework::Network::IoServicePool& MassiveMessageManager::GetIoServicePool()
+	{
+		return ioServicePool;
 	}
 	
 	bool MassiveMessageManager::IsConnectionPending()

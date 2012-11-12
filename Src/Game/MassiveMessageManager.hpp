@@ -86,6 +86,12 @@ namespace Game
 		GOMDatabase* GetGOMDatabase() const;
 
 		/**
+		 * @brief Get the IO service pool for client usage.
+		 * @return The IO service pool.
+		 */
+		Framework::Network::IoServicePool& GetIoServicePool();
+
+		/**
 		 * @brief Get the current connection pending status.
 		 * @return The Connection Pending Status.
 		 */
