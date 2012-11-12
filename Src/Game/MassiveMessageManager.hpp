@@ -85,13 +85,29 @@ namespace Game
 		 */
 		GOMDatabase* GetGOMDatabase() const;
 
+		/**
+		 * @brief Get the current connection pending status.
+		 * @return The Connection Pending Status.
+		 */
+		bool IsConnectionPending();
+
+		/**
+		 * @brief Get the current connection failiure status.
+		 * @return The Connection Failure Status.
+		 */
+		bool ConnectionFailed();
+		
+		/**
+		 * @brief Cancels a pending connection.
+		 */
+		void CancelPendingConnection();
+
 	private:
 
 		friend class GameServer;
 
 		void OnConnect(bool pConnected);
 
-		
 		GameServer::PlayerConstructor    playerConstructor;
 		GameServer::GOMServerConstructor gomConstructor;
 
@@ -99,6 +115,8 @@ namespace Game
 
 		std::unique_ptr<GOMDatabase>	gomDatabase;
 
+		bool connectionPending;
+		bool connectionFailed;
 		bool host;
 		uint16_t port;
 		std::string address;

@@ -12,25 +12,32 @@ namespace Game
 	MassiveMessageManager::MassiveMessageManager() :
 		host(false), 
 		ioServicePool(1),
-		gameServer(nullptr)
+		gameServer(nullptr),
+		connectionPending(false),
+		connectionFailed(false)
 	{
 		
 	}
 
 	MassiveMessageManager::~MassiveMessageManager()
 	{
-		
 		localPlayer.reset(nullptr);
 	}
 
 	void MassiveMessageManager::SetPort(uint16_t pPort)
 	{
-		port = pPort;
+		if(!connectionPending)
+		{
+			port = pPort;
+		}
 	}
 
 	void MassiveMessageManager::SetAddress(const std::string& pAddress)
 	{
-		address = pAddress;
+		if(!connectionPending)
+		{
+			address = pAddress;
+		}
 	}
 
 	void MassiveMessageManager::SetPlayerConstructor(GameServer::PlayerConstructor& ctor)
@@ -74,7 +81,8 @@ namespace Game
 
 	void MassiveMessageManager::Connect(const std::string& pAddress, const std::string& pPort)
 	{
-		Framework::System::Log::Debug(std::string("MassiveMessageManager : Connect to ") + pAddress + std::string(" at ") + pPort);
+		connectionPending = true;
+		Framework::System::Log::Debug(std::string("MassiveMessageManager : Connect to ") + pAddress + std::string(" Port ") + pPort);
 		connection->OnConnect.connect(boost::bind(&MassiveMessageManager::OnConnect, this, _1));
 		connection->Connect(pAddress,pPort);
 	}
@@ -97,22 +105,34 @@ namespace Game
 
 	void MassiveMessageManager::OnConnect(bool pConnected)
 	{
-		if(pConnected)
+		if(connectionPending)
 		{
-			localPlayer->SetConnection(connection);
+			connectionPending = false;
 
-			std::string decKey = Framework::System::RandomData(32);
-			std::string encKey = Framework::System::RandomData(32);
-			std::string decIV = Framework::System::RandomData(8);
-			std::string encIV = Framework::System::RandomData(8);
+			if(pConnected)
+			{
+				connectionFailed = false;
+				localPlayer->SetConnection(connection);
 
-			Framework::Network::Packet packet(1, Framework::Network::Packet::kHandshake);
-			packet << decKey << encKey << decIV << encIV;
+				std::string decKey = Framework::System::RandomData(32);
+				std::string encKey = Framework::System::RandomData(32);
+				std::string decIV = Framework::System::RandomData(8);
+				std::string encIV = Framework::System::RandomData(8);
 
-			localPlayer->SetCipher(new Framework::Crypt::Cipher(encKey, decKey, encIV, decIV));
-			localPlayer->Write(packet);
+				Framework::Network::Packet packet(1, Framework::Network::Packet::kHandshake);
+				packet << decKey << encKey << decIV << encIV;
 
-			connection->Start();
+				localPlayer->SetCipher(new Framework::Crypt::Cipher(encKey, decKey, encIV, decIV));
+				localPlayer->Write(packet);
+			
+				Framework::System::Log::Debug(std::string("MassiveMessageManager : Successfully connected to ") + address + std::string(":") + to_string((_Longlong)port));
+				connection->Start();
+			}
+			else
+			{
+				connectionFailed = true;
+				Framework::System::Log::Debug(std::string("MassiveMessageManager : Connection to ") + address + std::string(":") + to_string((_Longlong)port) + std::string(" failed!"));
+			}
 		}
 	}
 
@@ -157,6 +177,31 @@ namespace Game
 			return gomDatabase.get();
 		return nullptr;
 	}
+	
+	bool MassiveMessageManager::IsConnectionPending()
+	{
+		return connectionPending;
+	}
 
+	bool MassiveMessageManager::ConnectionFailed()
+	{
+		if(connectionFailed)
+		{
+			connectionFailed = false;
+			return true;
+		}
+
+		return false;
+	}
+	
+	void MassiveMessageManager::CancelPendingConnection()
+	{
+		if(connectionPending)
+		{
+			connection->Close();
+			connectionFailed = false;
+			connectionPending = false;
+		}
+	}
 	
 }
