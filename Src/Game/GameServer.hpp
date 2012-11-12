@@ -77,7 +77,7 @@ namespace Game
 		boost::timer mTransactionFullTimer;
 		boost::timer mTransactionPartialTimer;
 
-		boost::mutex mLock;
+		boost::recursive_mutex mLock;
 		std::map<Player::KeyType, Player*> mPlayers;
 
 		int mCellSize;

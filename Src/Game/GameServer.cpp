@@ -44,14 +44,14 @@ namespace Game
 			mTransactionPartialTimer.restart();
 		}
 
-		boost::mutex::scoped_lock _(mLock);
+		boost::recursive_mutex::scoped_lock _(mLock);
 		for(auto itor = mPlayers.begin(), end = mPlayers.end(); itor != end; ++itor)
 			itor->second->Update();
 	}
 
 	void GameServer::SendMessageAll(Framework::Network::Packet& pPacket)
 	{
-		boost::mutex::scoped_lock _(mLock);
+		boost::recursive_mutex::scoped_lock _(mLock);
 		for(auto itor = mPlayers.begin(), end = mPlayers.end(); itor != end; ++itor)
 		{
 			itor->second->Write(pPacket);
@@ -60,7 +60,7 @@ namespace Game
 
 	void GameServer::SendMessageAllSynchronized(Framework::Network::Packet& pPacket)
 	{
-		boost::mutex::scoped_lock _(mLock);
+		boost::recursive_mutex::scoped_lock _(mLock);
 		for(auto itor = mPlayers.begin(), end = mPlayers.end(); itor != end; ++itor)
 		{
 			if(itor->second->Synchronized())
@@ -80,7 +80,7 @@ namespace Game
 
 	void GameServer::OnConnection(Framework::Network::TcpConnection::pointer pConnection)
 	{
-		boost::mutex::scoped_lock _(mLock);
+		boost::recursive_mutex::scoped_lock _(mLock);
 
 		Player::KeyType key;
 		std::random_device rd;
@@ -127,7 +127,7 @@ namespace Game
 
 	void GameServer::Remove(Player* player)
 	{
-		boost::mutex::scoped_lock _(mLock);
+		boost::recursive_mutex::scoped_lock _(mLock);
 		auto itor = mPlayers.find(player->GetKey());
 		if(itor != mPlayers.end())
 		{

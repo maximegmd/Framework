@@ -18,7 +18,7 @@ namespace Framework
 		{
 			unsigned int logicThreads = boost::thread::hardware_concurrency();
 
-			mIoPool.reset(new IoServicePool(logicThreads));
+			mIoPool.reset(new IoServicePool(1));
 			mAcceptor.reset(new boost::asio::ip::tcp::acceptor(mIoPool->GetIoService(), tcp::endpoint(tcp::v4(), mPort)));
 
 			System::Log::Print("Server started : 0.0.0.0:" + std::to_string((unsigned long long)mPort));
