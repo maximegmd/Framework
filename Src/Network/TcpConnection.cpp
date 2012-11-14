@@ -15,6 +15,8 @@ namespace Framework
 		//---------------------------------------------------------------------
 		TcpConnection::~TcpConnection()
 		{
+			OnError.disconnect_all_slots();
+			OnConnect.disconnect_all_slots();
 		}
 		//---------------------------------------------------------------------
 		void TcpConnection::Close()
@@ -25,6 +27,7 @@ namespace Framework
 				mSocket.shutdown(boost::asio::socket_base::shutdown_both, e);
 				mSocket.close(e);
 			}
+			OnError("Close");
 		}
 		//---------------------------------------------------------------------
 		void TcpConnection::OnTimeout(const boost::system::error_code& e)

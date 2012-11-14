@@ -47,6 +47,17 @@ namespace Game
 		boost::recursive_mutex::scoped_lock _(mLock);
 		for(auto itor = mPlayers.begin(), end = mPlayers.end(); itor != end; ++itor)
 			itor->second->Update();
+
+		for(auto itor = mToRemove.begin(), end = mToRemove.end(); itor != end; ++itor)
+		{
+			auto itor2 = mPlayers.find((*itor)->GetKey());
+			if(itor2 != mPlayers.end())
+			{
+				mPlayers.erase(itor2);
+				delete *itor;
+			}
+		}
+		mToRemove.clear();
 	}
 
 	void GameServer::SendMessageAll(Framework::Network::Packet& pPacket)
@@ -128,11 +139,6 @@ namespace Game
 	void GameServer::Remove(Player* player)
 	{
 		boost::recursive_mutex::scoped_lock _(mLock);
-		auto itor = mPlayers.find(player->GetKey());
-		if(itor != mPlayers.end())
-		{
-			mPlayers.erase(itor);
-			delete player;
-		}
+		mToRemove.push_back(player);
 	}
 }

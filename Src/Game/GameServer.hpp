@@ -80,6 +80,8 @@ namespace Game
 		boost::recursive_mutex mLock;
 		std::map<Player::KeyType, Player*> mPlayers;
 
+		std::list<Player*> mToRemove;
+
 		int mCellSize;
 
 		friend class MassiveMessageManager;
