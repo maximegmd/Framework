@@ -61,6 +61,12 @@ namespace Game
 		 * @return The local player or nullptr if in server mode.
 		 */
 		Game::Player* GetLocalPlayer();
+		/**
+		 * @brief Retrieves a player from its key.
+		 * @param pKey The player's key.
+		 * @return The player associated with the key, if none nullptr.
+		 */
+		Game::Player* GetPlayer(int pKey);
 
 		/**
 		 * @brief Sends a message to the specified players.

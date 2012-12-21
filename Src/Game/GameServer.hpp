@@ -68,6 +68,13 @@ namespace Game
 		 */
 		void Remove(Player* pPlayer);
 
+		/**
+		 * @brief Retrieves a player by key.
+		 * @param pKey The player's key.
+		 * @return The player if found, nullptr otherwise.
+		 */
+		Player* GetPlayer(Player::KeyType pKey);
+
 	private:
 
 		void SendReplicationTransaction(GOMVisitor& visitor);

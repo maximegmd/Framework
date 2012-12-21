@@ -2,6 +2,7 @@
 
 #include "GOMObjects.hpp"
 #include <cstdint>
+#include <memory>
 #include <map>
 
 namespace Game

@@ -141,4 +141,13 @@ namespace Game
 		boost::recursive_mutex::scoped_lock _(mLock);
 		mToRemove.push_back(player);
 	}
+
+	Player* GameServer::GetPlayer(Player::KeyType pKey)
+	{
+		boost::recursive_mutex::scoped_lock _(mLock);
+		auto itor = mPlayers.find(pKey);
+		if(itor != mPlayers.end())
+			return itor->second;
+		return nullptr;
+	}
 }

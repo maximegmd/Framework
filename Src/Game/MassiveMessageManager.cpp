@@ -60,21 +60,24 @@ namespace Game
 		host = pHost;
 		gomDatabase.reset(new GOMDatabase(gomConstructor(nullptr)));	
 
+#ifndef _SERVER_MODE
 		std::random_device rd;
 		Player::KeyType key = rd()%std::numeric_limits<int32_t>::max() + 1;
 		Player* player = playerConstructor ? playerConstructor(key, nullptr) : new Player(key);
 		localPlayer.reset(player);
-
+#endif
 
 		if(host)
 		{
 			gameServer.reset(nullptr);
 			gameServer.reset(new GameServer(port, playerConstructor, gomConstructor));
+
+#ifndef _SERVER_MODE
 			player->OnSynchronize();
+#endif
 		}
 		else
 		{
-			
 			connection.reset(::new Framework::Network::TcpConnection(ioServicePool.GetIoService()));
 			Connect(address, std::to_string((long long)port));
 		}
@@ -102,6 +105,15 @@ namespace Game
 	Player* MassiveMessageManager::GetLocalPlayer()
 	{
 		return localPlayer.get();
+	}
+
+	Player* MassiveMessageManager::GetPlayer(int pKey)
+	{
+		if(localPlayer && localPlayer->GetKey() == pKey)
+			return localPlayer.get();
+		if(gameServer)
+			return gameServer->GetPlayer(pKey);
+		return nullptr;
 	}
 
 	void MassiveMessageManager::OnConnect(bool pConnected)
@@ -141,7 +153,22 @@ namespace Game
 
 	void MassiveMessageManager::SendMessageTo(int pKey, Framework::Network::Packet& pPacket)
 	{
-		if(localPlayer)
+		Player* player = GetPlayer(pKey);
+
+		if(player)
+		{
+#ifndef C4SERVER
+			if(player == localPlayer.get())
+			{
+				player->ReceivePacket(pPacket);
+			}
+			else
+#endif
+			{
+				player->Write(pPacket);
+			}
+		}
+		else if(localPlayer)
 		{
 			if(pKey == kPlayerServer)
 			{

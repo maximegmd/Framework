@@ -2,6 +2,7 @@
 
 #include <string>
 #include <functional>
+#include <memory>
 #include <list>
 
 #include <Game/Service.hpp>
