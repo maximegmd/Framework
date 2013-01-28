@@ -269,6 +269,7 @@
     <ClCompile Include="Src\Network\SslServer.cpp" />
     <ClCompile Include="Src\Network\TcpConnection.cpp" />
     <ClCompile Include="Src\Reflection\Class.cpp" />
+    <ClCompile Include="Src\Serialization\Serialization.cpp" />
     <ClCompile Include="Src\System\DBWorkQueue.cpp" />
     <ClCompile Include="Src\System\EventEmitter.cpp" />
     <ClCompile Include="Src\System\Log.cpp" />
@@ -322,6 +323,15 @@
     <ClInclude Include="Src\Network\TcpConnection.h" />
     <ClInclude Include="Src\Reflection\Class.h" />
     <ClInclude Include="Src\Reflection\Function.h" />
+    <ClInclude Include="Src\Serialization\BasicArray.hpp" />
+    <ClInclude Include="Src\Serialization\BasicSerializable.hpp" />
+    <ClInclude Include="Src\Serialization\BasicVector.hpp" />
+    <ClInclude Include="Src\Serialization\Macros.hpp" />
+    <ClInclude Include="Src\Serialization\Packed.hpp" />
+    <ClInclude Include="Src\Serialization\Serialization.hpp" />
+    <ClInclude Include="Src\Serialization\SwitchedField.hpp" />
+    <ClInclude Include="Src\Serialization\SwitchedSerializable.hpp" />
+    <ClInclude Include="Src\Serialization\Void.hpp" />
     <ClInclude Include="Src\System\any.h" />
     <ClInclude Include="Src\System\DBWorkQueue.h" />
     <ClInclude Include="Src\System\Event.h" />
@@ -333,6 +343,9 @@
     <ClInclude Include="Src\System\Singleton.h" />
     <ClInclude Include="Src\System\Tools.h" />
     <ClInclude Include="Src\System\WorkQueue.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Serialization\SwitchedSerializable.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

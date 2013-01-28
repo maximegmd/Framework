@@ -157,7 +157,7 @@ namespace Game
 
 		if(player)
 		{
-#ifndef C4SERVER
+#ifndef _SERVER_MODE
 			if(player == localPlayer.get())
 			{
 				player->ReceivePacket(pPacket);
