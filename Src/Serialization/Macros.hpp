@@ -4,7 +4,7 @@
 #include <type_traits>
 
 template <class A, class Value, class Enabled = void>
-struct Setter1
+struct Accessor1
 {
 	static void set(A& a, Value value)
 	{
@@ -13,7 +13,7 @@ struct Setter1
 };
 
 template <class A, class Value>
-struct Setter1<A, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
+struct Accessor1<A, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
 {
 	static void set(A& a, Value value)
 	{
@@ -22,59 +22,63 @@ struct Setter1<A, Value, typename std::enable_if<std::is_base_of<ISwitchedSerial
 };
 
 template <class A, class B, class Value, class Enabled = void>
-struct Setter2
+struct Accessor2
 {
 	static void set(A& a, B& b, Value value)
 	{
-		Setter1<B, Value>::set(b, value);
+		Accessor1<B, Value>::set(b, value);
 	}
+
+	static bool isSet(A& a, B& b)
+	{
+		return true;
+	}
+
 };
 
 template <class A, class B, class Value>
-struct Setter2<A, B, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
+struct Accessor2<A, B, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
 {
 	static void set(A& a, B& b, Value value)
 	{
 		a.impl.mFlag |= B::Flag;
-		Setter1<B, Value>::set(b, value);
+		Accessor1<B, Value>::set(b, value);
+	}
+
+	static bool isSet(A& a, B& b)
+	{
+		return (a.impl.mFlag & B::Flag) != 0;
 	}
 };
 
 template <class A, class B, class C, class Value, class Enabled = void>
-struct Setter3
+struct Accessor3
 {
 	static void set(A& a, B& b, C& c, Value value)
 	{
-		Setter2<B, C, Value>::set(b, c, value);
+		Accessor2<B, C, Value>::set(b, c, value);
+	}
+
+	static bool isSet(A& a, B& b, C& c)
+	{
+		return Accessor2<B, C, Value>::isSet(b, c);
 	}
 };
 
 template <class A, class B, class C, class Value>
-struct Setter3<A, B, C, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
+struct Accessor3<A, B, C, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
 {
 	static void set(A& a, B& b, C& c, Value value)
 	{
 		a.impl.mFlag |= B::Flag;
-		Setter2<B, C, Value>::set(b, c, value);
+		Accessor2<B, C, Value>::set(b, c, value);
 	}
-};
 
-template <class A, class B, class C, class D, class Value, class Enabled = void>
-struct Setter4
-{
-	static void set(A& a, B& b, C& c, D& d, Value value)
+	static bool isSet(A& a, B& b, C& c)
 	{
-		Setter3<B, C, D, Value>::set(b, c, d, value);
-	}
-};
-
-template <class A, class B, class C, class D, class Value>
-struct Setter4<A, B, C, D, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
-{
-	static void set(A& a, B& b, C& c, D& d, Value value)
-	{
-		a.impl.mFlag |= B::Flag;
-		Setter3<B, C, D, Value>::set(b, c, d, value);
+		if((a.impl.mFlag & B::Flag) != 0)
+			return Accessor2<B, C, Value>::isSet(b, c);
+		return false;
 	}
 };
 
@@ -82,28 +86,47 @@ struct Setter4<A, B, C, D, Value, typename std::enable_if<std::is_base_of<ISwitc
 { \
 	return impl.m##a; \
 } \
+bool IsSet##name() \
+{ \
+	return true; \
+} \
 void Set##name(Resolver<a>::Type p) \
 { \
 	typedef decltype(impl.m##a) Arg0;\
 	typedef decltype(p) Arg1;\
-	Setter1<Arg0, Arg1>::set(impl.m##a, p); \
+	Accessor1<Arg0, Arg1>::set(impl.m##a, p); \
 }
 
 #define ACCESSOR_2(a, b, Name) Resolver<a>::Type::Resolver<b>::Type Get##Name() \
 { \
 	return impl.m##a.impl.m##b; \
 } \
+bool IsSet##Name() \
+{ \
+	typedef decltype(impl.m##a) Arg0; \
+	typedef decltype(impl.m##a.impl.m##b) Arg1; \
+	typedef void* Arg2; \
+	return Accessor2<Arg0, Arg1, Arg2>::isSet(impl.m##a, impl.m##a.impl.m##b); \
+} \
 void Set##Name(Resolver<a>::Type::Resolver<b>::Type p)\
 { \
 	typedef decltype(impl.m##a) Arg0; \
 	typedef decltype(impl.m##a.impl.m##b) Arg1; \
 	typedef decltype(p) Arg2; \
-	Setter2<Arg0, Arg1, Arg2>::set(impl.m##a, impl.m##a.impl.m##b, p); \
+	Accessor2<Arg0, Arg1, Arg2>::set(impl.m##a, impl.m##a.impl.m##b, p); \
 }
 
 #define ACCESSOR_3(a, b, c, name) Resolver<a>::Type::Resolver<b>::Type::Resolver<c>::Type Get##name() \
 { \
 	return impl.m##a.impl.m##b.impl.m0.impl.m##c; \
+} \
+	bool IsSet##name() \
+{ \
+	typedef decltype(impl.m##a) Arg0; \
+	typedef decltype(impl.m##a.impl.m##b) Arg1; \
+	typedef decltype(impl.m##a.impl.m##b.impl.m##c) Arg2; \
+	typedef void* Arg3; \
+	return Accessor3<Arg0, Arg1, Arg2, Arg3>::isSet(impl.m##a, impl.m##a.impl.m##b, impl.m##a.impl.m##b.impl.m##c); \
 } \
 	void Set##name(Resolver<a>::Type::Resolver<b>::Type::Resolver<c>::Type p) \
 { \
@@ -111,5 +134,5 @@ void Set##Name(Resolver<a>::Type::Resolver<b>::Type p)\
 	typedef decltype(impl.m##a.impl.m##b) Arg1; \
 	typedef decltype(impl.m##a.impl.m##b.impl.m##c) Arg2; \
 	typedef decltype(p) Arg3; \
-	Setter3<Arg0, Arg1, Arg2, Arg3>::set(impl.m##a, impl.m##a.impl.m##b, impl.m##a.impl.m##b.impl.m##c, p); \
+	Accessor3<Arg0, Arg1, Arg2, Arg3>::set(impl.m##a, impl.m##a.impl.m##b, impl.m##a.impl.m##b.impl.m##c, p); \
 }

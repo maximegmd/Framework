@@ -29,7 +29,7 @@
 #ifdef __GNUC__
 #define DEPRECATED(x) x __attribute__ ((deprecated))
 #else
-#define DEPRECATED(x) x
+#define DEPRECATED(x) __declspec(deprecated) x
 #endif
 
 /*

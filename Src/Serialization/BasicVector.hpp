@@ -5,7 +5,7 @@ struct BasicVector : public std::vector<A>
 {
 	friend Framework::Network::Packet& operator<<(Framework::Network::Packet& p, BasicVector<A, B>& data)
 	{
-		p << data.mSize;
+		p << data.TypeSafeSize();
 		for(auto itor = data.begin(), end = data.end(); itor != end; ++itor)
 		{
 			p << (*itor);
@@ -14,8 +14,11 @@ struct BasicVector : public std::vector<A>
 	}
 	friend Framework::Network::Packet& operator>>(Framework::Network::Packet& p, BasicVector<A, B>& data)
 	{
-		p >> data.mSize;
-		for(size_t i = 0; i < (size_t)data.mSize; ++i)
+		size_type s = 0;
+		B stmp = 0;
+		p >> stmp;
+		s = static_cast<size_type>(stmp);
+		for(size_t i = 0; i < s; ++i)
 		{
 			B value;
 			p >> value;
@@ -24,7 +27,10 @@ struct BasicVector : public std::vector<A>
 		return p;
 	}
 
-private:
+	B TypeSafeSize() const
+	{
+		return static_cast<B>(size());
+	}
 
-	B mSize;
+private:
 };
