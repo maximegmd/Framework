@@ -9,32 +9,40 @@ struct SwitchedField
 
 	friend Framework::Network::Packet& operator<<(Framework::Network::Packet& p, SwitchedField<flag, A>& data)
 	{
-		p << data.impl.m0;
+		p << data.impl.head;
 		return p;
 	}
 	friend Framework::Network::Packet& operator>>(Framework::Network::Packet& p, SwitchedField<flag, A>& data)
 	{
-		p >> data.impl.m0;
+		p >> data.impl.head;
 		return p;
 	}
 
 	operator A()
 	{
-		return impl.m0;
+		return impl.head;
 	}
 
 	void operator=(A arg)
 	{
-		impl.m0 = arg;
+		impl.head = arg;
 	}
+
+	template <int N>
+	A get()
+	{
+		return impl.head;
+	}
+
+private:
 
 	struct Impl{
 
 		Impl()
 		{
-			m0 = A();
+			head = A();
 		}
 
-		A m0;
+		A head;
 	} impl;
 };

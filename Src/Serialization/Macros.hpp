@@ -84,7 +84,7 @@ struct Accessor3<A, B, C, Value, typename std::enable_if<std::is_base_of<ISwitch
 
 #define ACCESSOR_1(a, name) Resolver<a>::Type Get##name() \
 { \
-	return impl.m##a; \
+	return get<a>(); \
 } \
 bool IsSet##name() \
 { \
@@ -92,9 +92,9 @@ bool IsSet##name() \
 } \
 void Set##name(Resolver<a>::Type p) \
 { \
-	typedef decltype(impl.m##a) Arg0;\
-	typedef decltype(p) Arg1;\
-	Accessor1<Arg0, Arg1>::set(impl.m##a, p); \
+	/*typedef decltype(impl.m##a) Arg0;*/\
+	/*typedef decltype(p) Arg1;*/\
+	/*Accessor1<Arg0, Arg1>::set(impl.m##a, p);*/ \
 }
 
 #define ACCESSOR_2(a, b, Name) Resolver<a>::Type::Resolver<b>::Type Get##Name() \
