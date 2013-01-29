@@ -1,7 +1,7 @@
 #pragma once
 
-template <class A, class B>
-struct BasicVector : public std::vector<B>
+template <class A, class B = uint32_t>
+struct BasicVector : public std::vector<A>
 {
 	friend Framework::Network::Packet& operator<<(Framework::Network::Packet& p, BasicVector<A, B>& data)
 	{
@@ -26,5 +26,5 @@ struct BasicVector : public std::vector<B>
 
 private:
 
-	A mSize;
+	B mSize;
 };
