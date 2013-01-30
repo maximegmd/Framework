@@ -32,6 +32,16 @@ namespace Game
 		 */
 		void SetPort(uint16_t port);
 		/**
+		 * @brief Sets the protocol version.
+		 * @param version The version.
+		 */
+		void SetVersion(uint16_t version);
+		/**
+		 * @brief Gets the protocol version.
+		 * @return The version.
+		 */
+		uint16_t GetVersion();
+		/**
 		 * @brief Sets the address to connect to.
 		 * @param address The address.
 		 */
@@ -133,6 +143,7 @@ namespace Game
 		bool connectionFailed;
 		bool host;
 		uint16_t port;
+		uint16_t version;
 		std::string address;
 
 		//! Server side

@@ -122,6 +122,11 @@ namespace Game
 		uint32_t version, flag;
 		pPacket >> version >> flag;
 
+		if(version != TheMassiveMessageMgr->GetVersion())
+		{
+			mConnection->Close();
+		}
+
 		rsaData = Framework::Crypt::RSA::Decrypt(pPacket.GetBuffer());
 		pPacket.Initialize(rsaData);
 

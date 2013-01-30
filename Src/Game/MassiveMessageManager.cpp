@@ -32,6 +32,16 @@ namespace Game
 		}
 	}
 
+	void MassiveMessageManager::SetVersion(uint16_t version)
+	{
+		this->version = version;
+	}
+
+	uint16_t MassiveMessageManager::GetVersion()
+	{
+		return version;
+	}
+
 	void MassiveMessageManager::SetAddress(const std::string& pAddress)
 	{
 		if(!connectionPending)
@@ -132,7 +142,7 @@ namespace Game
 				std::string decIV = Framework::System::RandomData(8);
 				std::string encIV = Framework::System::RandomData(8);
 
-				Framework::Network::Packet packet(1, Framework::Network::Packet::kHandshake);
+				Framework::Network::Packet packet(GetVersion(), Framework::Network::Packet::kHandshake);
 				packet << decKey << encKey << decIV << encIV;
 
 				localPlayer->SetCipher(new Framework::Crypt::Cipher(encKey, decKey, encIV, decIV));

@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <memory>
 #include <map>
+#include <set>
 
 namespace Game
 {
@@ -122,6 +123,7 @@ namespace Game
 		 */
 		void Add(WrappedType* m, int32_t state, int32_t id = -1)
 		{
+			newIds.insert(id);
 			DoAdd(m, state, id);
 		}
 		/**
@@ -165,10 +167,11 @@ namespace Game
 			{
 				for(auto itor = replicationMap[kTransactionPartial].begin(), end = replicationMap[kTransactionPartial].end(); itor != end; ++itor)
 				{
-					if(itor->second->IsDirty())
+					if(itor->second->IsDirty() || newIds.find(itor->first) != newIds.end())
 					{
 						op(GetGroup(), itor->first, kTransactionPartial, itor->second.get());
 						itor->second->SetDirty(false);
+						newIds.erase(newIds.find(itor->first));
 					}
 				}
 			}
@@ -177,10 +180,11 @@ namespace Game
 			{
 				for(auto itor = replicationMap[kTransactionFull].begin(), end = replicationMap[kTransactionFull].end(); itor != end; ++itor)
 				{
-					if(itor->second->IsDirty())
+					if(itor->second->IsDirty() || newIds.find(itor->first) != newIds.end())
 					{
 						op(GetGroup(), itor->first, kTransactionFull, itor->second.get());
 						itor->second->SetDirty(false);
+						newIds.erase(newIds.find(itor->first));
 					}
 				}
 			}
@@ -199,5 +203,6 @@ namespace Game
 		int32_t							replicationId;
 		std::map<int32_t, std::shared_ptr<EntryType> >    replicationMap[3];
 		std::list<int32_t>				removedIds;
+		std::set<int32_t>				newIds;
 	};
 }

@@ -47,7 +47,8 @@ namespace Game
 		std::string Serialize(bool pFull)
 		{
 			std::string data = DoSerialize(pFull);
-			Synchronize();
+			if(!pFull)
+				Synchronize();
 			return data;
 		}
 		/**

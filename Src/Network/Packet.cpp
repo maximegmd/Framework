@@ -262,11 +262,16 @@ namespace Framework
 			*this >> size;
 
 			// Check for fake string size to prevent memory hacks
-			if(size > mBuffer.size() || size == 0)
+			if(size > mBuffer.size())
 			{
 				std::ostringstream os;
 				os << "String size (" << size << ") > packet size (" << mBuffer.size() << ")";
 				throw std::out_of_range(os.str());
+			}
+			if(size == 0)
+			{
+				pData = "";
+				return *this;
 			}
 
 			pData = mBuffer.substr(0,size);
