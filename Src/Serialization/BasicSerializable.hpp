@@ -20,12 +20,7 @@ struct getValue {
 	template <typename ReturnType, typename Head, typename... TailArgs>
 	static ReturnType get(BasicSerializable<Head, TailArgs...>& t) {                                                                          
 		return getValue<N - 1>::template get<ReturnType, TailArgs...>(t.next());
-	}                                                                          
-
-	template <typename ReturnType, typename Head, typename... TailArgs>
-	static const ReturnType get(const BasicSerializable<Head, TailArgs...>& t) {                                                                          
-		return getValue<N - 1>::template get<ReturnType, TailArgs...>(t.next());
-	}                                                                          
+	}                                                                                                                                                    
 };                                                                           
 
 template <>
@@ -33,12 +28,7 @@ struct getValue<0> {
 	template <typename ReturnType, typename... Args>
 	static ReturnType get(BasicSerializable<Args...>& t) {                                                                         
 		return t.head();
-	}                                                                         
-
-	template <typename ReturnType, typename... Args>
-	static const ReturnType get(const BasicSerializable<Args...>& t) {                                                                         
-		return t.head();
-	}                                                                         
+	}                                                                                                                                                
 };
 
 template <typename T, typename... Args>
@@ -47,6 +37,7 @@ struct BasicSerializable<T, Args...> : private BasicSerializable<Args...>
 public:
 
 	typedef typename BasicSerializable<T, Args...> Type;
+	typedef Type RawType;
 
 	friend Framework::Network::Packet& operator<<(Framework::Network::Packet& p, Type& data)
 	{
@@ -81,18 +72,18 @@ public:
 	};
 
 	template <int N>
-	typename Resolver<N>::Type
+	typename Resolver<N>::Type&
 	get() 
 	{
-		return getValue<N>::get<typename Resolver<N>::Type, T, Args...>(*this);
+		return getValue<N>::get<typename Resolver<N>::Type&, T, Args...>(*this);
 	}
 
-	const BasicSerializable<Args...>& next() const
+	BasicSerializable<Args...>& next()
 	{
 		return *this;
 	}
 
-	T head() const
+	T& head()
 	{
 		return impl.head;
 	}

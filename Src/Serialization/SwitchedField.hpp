@@ -6,6 +6,7 @@ struct SwitchedField
 	static const uint32_t Flag = flag;
 
 	typedef typename A Type;
+	typedef Type RawType;
 
 	friend Framework::Network::Packet& operator<<(Framework::Network::Packet& p, SwitchedField<flag, A>& data)
 	{
@@ -29,7 +30,7 @@ struct SwitchedField
 	}
 
 	template <int N>
-	A get()
+	A& get()
 	{
 		return impl.head;
 	}

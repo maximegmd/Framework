@@ -36,18 +36,23 @@ struct Accessor2
 
 };
 
-template <class A, class B, class Value>
-struct Accessor2<A, B, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
+template <class A, typename B, class Value>
+struct Accessor2<A, B, Value, 
+		typename std::enable_if
+		<
+			std::is_base_of<ISwitchedSerializable, typename std::remove_reference<A>::type>::value
+		>::type
+	>
 {
 	static void set(A& a, B& b, Value value)
 	{
-		a.impl.mFlag |= B::Flag;
+		a.flag() |= B::Flag;
 		Accessor1<B, Value>::set(b, value);
 	}
 
 	static bool isSet(A& a, B& b)
 	{
-		return (a.impl.mFlag & B::Flag) != 0;
+		return (a.flag() & B::Flag) != 0;
 	}
 };
 
@@ -70,13 +75,13 @@ struct Accessor3<A, B, C, Value, typename std::enable_if<std::is_base_of<ISwitch
 {
 	static void set(A& a, B& b, C& c, Value value)
 	{
-		a.impl.mFlag |= B::Flag;
+		a.flag() |= B::Flag;
 		Accessor2<B, C, Value>::set(b, c, value);
 	}
 
 	static bool isSet(A& a, B& b, C& c)
 	{
-		if((a.impl.mFlag & B::Flag) != 0)
+		if((a.flag() & B::Flag) != 0)
 			return Accessor2<B, C, Value>::isSet(b, c);
 		return false;
 	}
@@ -92,28 +97,29 @@ bool IsSet##name() \
 } \
 void Set##name(Resolver<a>::Type p) \
 { \
-	/*typedef decltype(impl.m##a) Arg0;*/\
-	/*typedef decltype(p) Arg1;*/\
-	/*Accessor1<Arg0, Arg1>::set(impl.m##a, p);*/ \
+	typedef std::remove_reference<decltype(get<a>())>::type Arg0;\
+	typedef decltype(p) Arg1;\
+	Accessor1<Arg0, Arg1>::set(get<a>(), p); \
 }
 
-#define ACCESSOR_2(a, b, Name) Resolver<a>::Type::Resolver<b>::Type Get##Name() \
+
+#define ACCESSOR_2(a, b, Name) Resolver<a>::Type::Resolver<b>::RawType Get##Name() \
 { \
-	return impl.m##a.impl.m##b; \
+	return get<a>().get<b>(); \
 } \
 bool IsSet##Name() \
 { \
-	typedef decltype(impl.m##a) Arg0; \
-	typedef decltype(impl.m##a.impl.m##b) Arg1; \
+	typedef std::remove_reference<decltype(get<a>())>::type Arg0; \
+	typedef std::remove_reference<decltype(get<a>().get<b>())>::type Arg1; \
 	typedef void* Arg2; \
-	return Accessor2<Arg0, Arg1, Arg2>::isSet(impl.m##a, impl.m##a.impl.m##b); \
+	return Accessor2<Arg0, Arg1, Arg2>::isSet(get<a>(), get<a>().get<b>()); \
 } \
 void Set##Name(Resolver<a>::Type::Resolver<b>::Type p)\
 { \
-	typedef decltype(impl.m##a) Arg0; \
-	typedef decltype(impl.m##a.impl.m##b) Arg1; \
+	typedef std::remove_reference<decltype(get<a>())>::type Arg0; \
+	typedef std::remove_reference<decltype(get<a>().get<b>())>::type Arg1; \
 	typedef decltype(p) Arg2; \
-	Accessor2<Arg0, Arg1, Arg2>::set(impl.m##a, impl.m##a.impl.m##b, p); \
+	return Accessor2<Arg0, Arg1, Arg2>::set(get<a>(), get<a>().get<b>(), p); \
 }
 
 #define ACCESSOR_3(a, b, c, name) Resolver<a>::Type::Resolver<b>::Type::Resolver<c>::Type Get##name() \

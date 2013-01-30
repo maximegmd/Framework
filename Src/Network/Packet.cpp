@@ -42,6 +42,12 @@ namespace Framework
 			return *this;
 		}
 		//---------------------------------------------------------------------
+		Packet& Packet::operator<<(char pData)
+		{
+			mBuffer.append((char*)&pData, 1);
+			return *this;
+		}
+		//---------------------------------------------------------------------
 		Packet& Packet::operator<<(const uint8_t& pData)
 		{
 			mBuffer.append((char*)&pData, 1);
@@ -115,6 +121,18 @@ namespace Framework
 			uint8_t i;
 			*this >> i;
 			pData = i ? true : false;
+			return *this;
+		}
+		//---------------------------------------------------------------------
+		Packet& Packet::operator>>(char& pData)
+		{
+			if(mBuffer.size() < 1)
+			{
+				pData = 0;
+				return *this;
+			}
+			pData = *(uint8_t*)&mBuffer[0];
+			mBuffer.erase(0,1);
 			return *this;
 		}
 		//---------------------------------------------------------------------
