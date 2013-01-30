@@ -88,6 +88,17 @@ public:
 		return impl.head;
 	}
 
+	Framework::Network::Packet ToPacket(uint32_t opcode = 0)
+	{
+		Framework::Network::Packet packet;
+
+		if(opcode != 0)
+			packet.Opcode = opcode;
+
+		packet << *this;
+		return std::move(packet);
+	}
+
 private:
 
 	struct Impl

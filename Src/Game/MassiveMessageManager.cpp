@@ -196,7 +196,7 @@ namespace Game
 		{
 			if(gameServer)
 				gameServer->SendMessageAll(pPacket);
-			if(localPlayer)
+			else if(localPlayer)
 				localPlayer->ReceivePacket(pPacket);
 		}
 	}
