@@ -32,22 +32,18 @@ namespace Game
 		if(mTransactionFullTimer.elapsed() > 0.1)
 		{
 			GOMVisitor visitor;
+
 			uint32_t flag = kTransactionFull;
+
 			if(mTransactionPartialTimer.elapsed() > 1.0)
 			{
 				flag |= kTransactionPartial;
 				mTransactionPartialTimer.restart();
 			}
+
 			TheMassiveMessageMgr->GetGOMDatabase()->VisitDirty(GOMDatabase::kAllGOMServers, flag, visitor);
 			SendReplicationTransaction(visitor);
 			mTransactionFullTimer.restart();
-		}
-		else if(mTransactionPartialTimer.elapsed() > 1.0)
-		{
-			GOMVisitor visitor;
-			TheMassiveMessageMgr->GetGOMDatabase()->VisitDirty(GOMDatabase::kAllGOMServers, kTransactionPartial, visitor);
-			SendReplicationTransaction(visitor);
-			mTransactionPartialTimer.restart();
 		}
 
 		boost::recursive_mutex::scoped_lock _(mLock);
@@ -121,25 +117,20 @@ namespace Game
 		if(visitor.gomEntries.empty() && visitor.gomDeleted.empty())
 			return;
 
-		Framework::Network::Packet packet(Player::kReplicationTransaction);
+		GOMTransaction transaction;
 
-		uint8_t flags = 0;
-		packet << flags;
 		if(visitor.gomEntries.size())
 		{
-			flags |= kReplicationUpdate;
-			packet << visitor.gomEntries;
+			transaction.SetUpdateMap(visitor.gomEntries);
 		}
 		if(visitor.gomDeleted.size())
 		{
 			Framework::System::Log::Debug("Sending removal");
-			flags |= kReplicationRemove;
-			packet << visitor.gomDeleted;
+			transaction.SetDeleteList(visitor.gomDeleted);
 		}
 
-		packet.Write(&flags, 1, 0);
 
-		SendMessageAllSynchronized(packet);
+		SendMessageAllSynchronized(transaction.ToPacket(Player::kReplicationTransaction));
 	}
 
 	void GameServer::Remove(Player* player)

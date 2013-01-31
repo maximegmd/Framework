@@ -10,12 +10,12 @@ namespace Game
 		std::ostringstream os;
 		os << "\nReplication Transaction Log\n\n";
 
-		uint8_t flags = 0;
-		pPacket >> flags;
+		GOMTransactionRaw transaction;
+		pPacket >> transaction;
 
-		if(flags & kReplicationUpdate)
+		if(transaction.IsSetUpdateMap())
 		{
-			std::map<int32_t, std::list<GOMStateRaw> > states;
+			std::map<int32_t, std::list<GOMStateRaw> > states = transaction.GetUpdateMap();
 			pPacket >> states;
 
 			os << "\tUpdate Transaction :";
@@ -31,10 +31,9 @@ namespace Game
 				}
 			}
 		}
-		if(flags & kReplicationRemove)
+		if(transaction.IsSetDeleteList())
 		{
-			std::map<int32_t, std::list<uint32_t> > deleted;
-			pPacket >> deleted;
+			std::map<int32_t, std::list<uint32_t> > deleted = transaction.GetDeleteList();
 		
 			os << "\tDelete transaction :";
 			for(auto itor = deleted.begin(), end = deleted.end(); itor != end; ++itor)

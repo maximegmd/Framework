@@ -11,24 +11,23 @@ namespace Game
 		GOMVisitor visitor;
 		gomDatabase->VisitAll(Game::GOMDatabase::kAllGOMServers, visitor);
 
+		// Don't send if we have nothing to send...
+		if(visitor.gomEntries.empty())
+		{
+			synchronized = true;
+			return;
+		}
+
 		visitor.apply([](GOMState& state){state.full = true;});
 
-		uint8_t flags = 0;
-		packet << flags;
+		GOMTransaction transaction;
+
 		if(visitor.gomEntries.size())
 		{
-			flags |= kReplicationUpdate;
-			packet << visitor.gomEntries;
+			transaction.SetUpdateMap(visitor.gomEntries);
 		}
-		if(visitor.gomDeleted.size())
-		{
-			flags |= kReplicationRemove;
-			packet << visitor.gomDeleted;
-		}
-		
-		packet.Write(&flags, 1, 0);
 
-		Write(packet);
+		Write(transaction.ToPacket(Player::kReplicationTransaction));
 
 		synchronized = true;
 	}
