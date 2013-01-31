@@ -34,7 +34,8 @@ namespace Game
 		 * @return true if they match, false if they don't.
 		 */
 		operator bool() const{
-			return (a == getter());
+			auto b = getter();
+			return (a == b);
 		}
 		/**
 		 * @brief Sets the previous value to the current value.

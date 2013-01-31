@@ -32,7 +32,13 @@ namespace Game
 		if(mTransactionFullTimer.elapsed() > 0.1)
 		{
 			GOMVisitor visitor;
-			TheMassiveMessageMgr->GetGOMDatabase()->VisitDirty(GOMDatabase::kAllGOMServers, kTransactionFull, visitor);
+			uint32_t flag = kTransactionFull;
+			if(mTransactionPartialTimer.elapsed() > 1.0)
+			{
+				flag |= kTransactionPartial;
+				mTransactionPartialTimer.restart();
+			}
+			TheMassiveMessageMgr->GetGOMDatabase()->VisitDirty(GOMDatabase::kAllGOMServers, flag, visitor);
 			SendReplicationTransaction(visitor);
 			mTransactionFullTimer.restart();
 		}
