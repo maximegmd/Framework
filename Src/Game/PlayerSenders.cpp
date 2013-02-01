@@ -6,8 +6,6 @@ namespace Game
 {
 	void Player::SendReplicationTransaction(GOMDatabase* gomDatabase)
 	{
-		Framework::Network::Packet packet(kReplicationTransaction);
-
 		GOMVisitor visitor;
 		gomDatabase->VisitAll(Game::GOMDatabase::kAllGOMServers, visitor);
 
@@ -17,8 +15,6 @@ namespace Game
 			synchronized = true;
 			return;
 		}
-
-		visitor.apply([](GOMState& state){state.full = true;});
 
 		GOMTransaction transaction;
 

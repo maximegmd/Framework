@@ -20,8 +20,9 @@ namespace Game
 		 * @param id The id of the GOM Entry in the GOM Server.
 		 * @param state The state of the GOM Entry in the GOM Server.
 		 * @param gomEntry The GOM Entry.
+		 * @param pFull The level of sync.
 		 */
-		GOMState(int32_t id, int32_t state, IGOMEntry* gomEntry);
+		GOMState(int32_t id, int32_t state, IGOMEntry* gomEntry, bool pFull);
 
 		int32_t id, state;
 		IGOMEntry* gomEntry;
@@ -45,9 +46,10 @@ namespace Game
 		 * @param id The id of the GOM Entry in the GOM Server.
 		 * @param state The state of the GOM Entry in the GOM Server.
 		 * @param gomEntry The GOM Entry.
+		 * @param full The level of sync.
 		 * @return
 		 */
-		void operator()(int32_t type, int32_t id, int32_t state, IGOMEntry* gomEntry);
+		void operator()(int32_t type, int32_t id, int32_t state, IGOMEntry* gomEntry, bool full = false);
 		void operator()(int32_t type, int32_t id);
 
 		template <class Op>

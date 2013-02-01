@@ -144,17 +144,17 @@ namespace Game
 		{
 			for(auto itor = replicationMap[2].begin(), end = replicationMap[2].end(); itor != end; ++itor)
 			{
-				op(GetGroup(), itor->first, 2, itor->second.get());
+				op(GetGroup(), itor->first, 2, itor->second.get(), true);
 			}
 
 			for(auto itor = replicationMap[1].begin(), end = replicationMap[1].end(); itor != end; ++itor)
 			{
-				op(GetGroup(),itor->first, 1, itor->second.get());
+				op(GetGroup(),itor->first, 1, itor->second.get(), true);
 			}
 
 			for(auto itor = replicationMap[0].begin(), end = replicationMap[0].end(); itor != end; ++itor)
 			{
-				op(GetGroup(),itor->first, 0, itor->second.get());
+				op(GetGroup(),itor->first, 0, itor->second.get(), true);
 			}
 		}
 		/**
@@ -167,9 +167,14 @@ namespace Game
 			{
 				for(auto itor = replicationMap[kTransactionPartial].begin(), end = replicationMap[kTransactionPartial].end(); itor != end; ++itor)
 				{
-					if(itor->second->IsDirty() || newIds.find(itor->first) != newIds.end())
+					if(itor->second->IsDirty())
 					{
 						op(GetGroup(), itor->first, kTransactionPartial, itor->second.get());
+						itor->second->SetDirty(false);
+					}
+					else if(newIds.find(itor->first) != newIds.end())
+					{
+						op(GetGroup(), itor->first, kTransactionPartial, itor->second.get(), true);
 						itor->second->SetDirty(false);
 						newIds.erase(newIds.find(itor->first));
 					}
@@ -187,7 +192,7 @@ namespace Game
 					}
 					else if(newIds.find(itor->first) != newIds.end())
 					{
-						op(GetGroup(), itor->first, kTransactionFull, itor->second.get());
+						op(GetGroup(), itor->first, kTransactionFull, itor->second.get(), true);
 						itor->second->SetDirty(false);
 						newIds.erase(newIds.find(itor->first));
 					}
