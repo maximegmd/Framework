@@ -167,16 +167,18 @@ namespace Game
 			{
 				for(auto itor = replicationMap[kTransactionPartial].begin(), end = replicationMap[kTransactionPartial].end(); itor != end; ++itor)
 				{
-					if(itor->second->IsDirty())
+					auto itor2 = newIds.find(itor->first);
+					if(itor->second->IsDirty() && itor2 == newIds.end())
 					{
 						op(GetGroup(), itor->first, kTransactionPartial, itor->second.get());
 						itor->second->SetDirty(false);
 					}
-					else if(newIds.find(itor->first) != newIds.end())
+					else if(itor2 != newIds.end())
 					{
 						op(GetGroup(), itor->first, kTransactionPartial, itor->second.get(), true);
 						itor->second->SetDirty(false);
-						newIds.erase(newIds.find(itor->first));
+						itor->second->Synchronize();
+						newIds.erase(itor2);
 					}
 				}
 			}
@@ -185,16 +187,19 @@ namespace Game
 			{
 				for(auto itor = replicationMap[kTransactionFull].begin(), end = replicationMap[kTransactionFull].end(); itor != end; ++itor)
 				{
-					if(itor->second->IsDirty())
+					auto itor2 = newIds.find(itor->first);
+					if(itor->second->IsDirty() && itor2 == newIds.end())
 					{
 						op(GetGroup(), itor->first, kTransactionFull, itor->second.get());
 						itor->second->SetDirty(false);
 					}
-					else if(newIds.find(itor->first) != newIds.end())
+					else if(itor2 != newIds.end())
 					{
+						Framework::System::Log::Debug("Full new transaction");
 						op(GetGroup(), itor->first, kTransactionFull, itor->second.get(), true);
 						itor->second->SetDirty(false);
-						newIds.erase(newIds.find(itor->first));
+						itor->second->Synchronize();
+						newIds.erase(itor2);
 					}
 				}
 			}
