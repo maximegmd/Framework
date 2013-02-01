@@ -153,4 +153,9 @@ namespace Game
 	{
 
 	}
+
+	void Player::OnEnterAwareness()
+	{
+
+	}
 }

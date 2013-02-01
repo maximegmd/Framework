@@ -180,7 +180,12 @@ namespace Game
 			{
 				for(auto itor = replicationMap[kTransactionFull].begin(), end = replicationMap[kTransactionFull].end(); itor != end; ++itor)
 				{
-					if(itor->second->IsDirty() || newIds.find(itor->first) != newIds.end())
+					if(itor->second->IsDirty())
+					{
+						op(GetGroup(), itor->first, kTransactionFull, itor->second.get());
+						itor->second->SetDirty(false);
+					}
+					else if(newIds.find(itor->first) != newIds.end())
 					{
 						op(GetGroup(), itor->first, kTransactionFull, itor->second.get());
 						itor->second->SetDirty(false);

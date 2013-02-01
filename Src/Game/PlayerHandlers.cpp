@@ -58,6 +58,7 @@ namespace Game
 
 	void Player::HandleAwareness(Framework::Network::Packet& pPacket)
 	{
+		OnEnterAwareness();
 		SendReplicationTransaction(TheMassiveMessageMgr->GetGOMDatabase());
 	}
 }

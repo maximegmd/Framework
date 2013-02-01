@@ -103,6 +103,7 @@ namespace Game
 		}
 
 		virtual void OnSynchronize();
+		virtual void OnEnterAwareness();
 
 		GameServer* gameServer;
 

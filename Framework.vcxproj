@@ -255,6 +255,7 @@
     <ClCompile Include="Src\Game\PlayerHandlers.cpp" />
     <ClCompile Include="Src\Game\PlayerSenders.cpp" />
     <ClCompile Include="Src\Game\ServiceDatabase.cpp" />
+    <ClCompile Include="Src\Math\Vector3.cpp" />
     <ClCompile Include="Src\Network\HttpClient.cpp" />
     <ClCompile Include="Src\Network\HttpServer\Connection.cpp" />
     <ClCompile Include="Src\Network\HttpServer\MimeTypes.cpp" />
@@ -304,6 +305,8 @@
     <ClInclude Include="Src\Game\Player.hpp" />
     <ClInclude Include="Src\Game\Service.hpp" />
     <ClInclude Include="Src\Game\ServiceDatabase.hpp" />
+    <ClInclude Include="Src\Math\Math.hpp" />
+    <ClInclude Include="Src\Math\Vector3.hpp" />
     <ClInclude Include="Src\Network\HttpClient.h" />
     <ClInclude Include="Src\Network\HttpServer\Connection.hpp" />
     <ClInclude Include="Src\Network\HttpServer\Header.hpp" />
