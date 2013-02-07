@@ -125,7 +125,6 @@ namespace Game
 		}
 		if(visitor.gomDeleted.size())
 		{
-			Framework::System::Log::Debug("Sending removal");
 			transaction.SetDeleteList(visitor.gomDeleted);
 		}
 

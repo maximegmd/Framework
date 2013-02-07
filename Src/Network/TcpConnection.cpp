@@ -28,6 +28,8 @@ namespace Framework
 				mSocket.close(e);
 			}
 			OnError("Close");
+
+			OnError.disconnect_all_slots();
 		}
 		//---------------------------------------------------------------------
 		void TcpConnection::OnTimeout(const boost::system::error_code& e)
@@ -87,7 +89,6 @@ namespace Framework
 			}
 			else
 			{
-				System::Log::Debug("handle write failed.");
 				Close();
 			}
 		}

@@ -195,7 +195,6 @@ namespace Game
 					}
 					else if(itor2 != newIds.end())
 					{
-						Framework::System::Log::Debug("Full new transaction");
 						op(GetGroup(), itor->first, kTransactionFull, itor->second.get(), true);
 						itor->second->SetDirty(false);
 						itor->second->Synchronize();
