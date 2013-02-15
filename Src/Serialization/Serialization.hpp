@@ -1,7 +1,9 @@
 #include <vector>
+#include <array>
+#include <tuple>
+
 #include <Network/Packet.h>
 
-#include "Void.hpp"
 #include "BasicVector.hpp"
 #include "BasicArray.hpp"
 #include "BasicSerializable.hpp"

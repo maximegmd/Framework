@@ -6,9 +6,9 @@ struct BasicVector : public std::vector<A>
 	friend Framework::Network::Packet& operator<<(Framework::Network::Packet& p, BasicVector<A, B>& data)
 	{
 		p << data.TypeSafeSize();
-		for(auto itor = data.begin(), end = data.end(); itor != end; ++itor)
+		for(auto itor : *this)
 		{
-			p << (*itor);
+			p << itor;
 		}
 		return p;
 	}
@@ -18,11 +18,11 @@ struct BasicVector : public std::vector<A>
 		B stmp = 0;
 		p >> stmp;
 		s = static_cast<size_type>(stmp);
+		data.resize(s);
+
 		for(size_t i = 0; i < s; ++i)
 		{
-			B value;
-			p >> value;
-			data.push_back(value);
+			p >> data[s];
 		}
 		return p;
 	}
@@ -30,6 +30,11 @@ struct BasicVector : public std::vector<A>
 	B TypeSafeSize() const
 	{
 		return static_cast<B>(size());
+	}
+
+	operator std::vector<A>&()
+	{
+		return (std::vector<A>&)*this;
 	}
 
 private:

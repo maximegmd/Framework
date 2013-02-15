@@ -3,17 +3,8 @@
 #include "SwitchedSerializable.hpp"
 #include <type_traits>
 
-template <class A, class Value, class Enabled = void>
+template <class A, class Value, class Enabled>
 struct Accessor1
-{
-	static void set(A& a, Value value)
-	{
-		a = value;
-	}
-};
-
-template <class A, class Value>
-struct Accessor1<A, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
 {
 	static void set(A& a, Value value)
 	{
@@ -26,7 +17,7 @@ struct Accessor2
 {
 	static void set(A& a, B& b, Value value)
 	{
-		Accessor1<B, Value>::set(b, value);
+		Accessor1<B, Value, void>::set(b, value);
 	}
 
 	static bool isSet(A& a, B& b)
@@ -47,7 +38,7 @@ struct Accessor2<A, B, Value,
 	static void set(A& a, B& b, Value value)
 	{
 		a.flag() |= B::Flag;
-		Accessor1<B, Value>::set(b, value);
+		Accessor1<B, Value, void>::set(b, value);
 	}
 
 	static bool isSet(A& a, B& b)

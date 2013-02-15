@@ -1,91 +1,65 @@
 #pragma once
 
 
-template <typename... Args> struct BasicSerializable;
-template <> struct BasicSerializable<> 
+template <typename... Args>
+struct BasicSerializable: private std::tuple<Args...>
 {
+private:
 
-	friend Framework::Network::Packet& operator<<(Framework::Network::Packet& p, BasicSerializable<>& data)
+	template <int N>
+	struct Serializer
 	{
-		return p;
-	}
-	friend Framework::Network::Packet& operator>>(Framework::Network::Packet& p, BasicSerializable<>& data)
+		static void ser(Framework::Network::Packet& p, std::tuple<Args...>& data)
+		{
+			p << std::get<N>(data);
+			Serializer<N - 1>::ser(p, data);
+		}
+
+		static void deser(Framework::Network::Packet& p, std::tuple<Args...>& data)
+		{
+			p >> std::get<N>(data);
+			Serializer<N - 1>::deser(p, data);
+		}
+	};
+
+	template <>
+	struct Serializer<0>
 	{
-		return p;
-	}
-};
+		static void ser(Framework::Network::Packet& p, std::tuple<Args...>& data)
+		{
+		}
 
-template <int N>
-struct getValue {
-	template <typename ReturnType, typename Head, typename... TailArgs>
-	static ReturnType get(BasicSerializable<Head, TailArgs...>& t) {                                                                          
-		return getValue<N - 1>::template get<ReturnType, TailArgs...>(t.next());
-	}                                                                                                                                                    
-};                                                                           
+		static void deser(Framework::Network::Packet& p, std::tuple<Args...>& data)
+		{
+		}
+	};
 
-template <>
-struct getValue<0> {
-	template <typename ReturnType, typename... Args>
-	static ReturnType get(BasicSerializable<Args...>& t) {                                                                         
-		return t.head();
-	}                                                                                                                                                
-};
-
-template <typename T, typename... Args>
-struct BasicSerializable<T, Args...> : private BasicSerializable<Args...>
-{
 public:
 
-	typedef typename BasicSerializable<T, Args...> Type;
+	typedef typename BasicSerializable<Args...> Type;
 	typedef Type RawType;
 
 	friend Framework::Network::Packet& operator<<(Framework::Network::Packet& p, Type& data)
 	{
-		p << data.impl.head << (BasicSerializable<Args...>&)(data);
+		Serializer<std::tuple_size<Type>::value>::ser(p, data);
 		return p;
 	}
 	friend Framework::Network::Packet& operator>>(Framework::Network::Packet& p, Type& data)
 	{
-		p >> data.impl.head >> (BasicSerializable<Args...>&)(data);
+		Serializer<std::tuple_size<Type>::value>::deser(p, data);
 		return p;
 	}
 
-private:
-
-	template <int N, typename... Arg> struct Resolver_impl;
-
-	template <typename A0, typename... Arg>
-	struct Resolver_impl<0, A0, Arg...> {
-		typedef A0 Type;
-	};
-
-	template <int N, typename A0, typename... Arg>
-	struct Resolver_impl<N, A0, Arg...> {
-		typedef typename Resolver_impl<N - 1, Arg...>::Type Type;
-	};
-
-public:
-
 	template <int N> struct Resolver
 	{
-		typedef typename Resolver_impl<N, T, Args...>::Type Type;
+		typedef typename std::tuple_element<N, std::tuple<Args...>>::type Type;
 	};
 
-	template <int N>
+	template <size_t N>
 	typename Resolver<N>::Type&
-	get() 
+	get()
 	{
-		return getValue<N>::get<typename Resolver<N>::Type&, T, Args...>(*this);
-	}
-
-	BasicSerializable<Args...>& next()
-	{
-		return *this;
-	}
-
-	T& head()
-	{
-		return impl.head;
+		return std::get<N>(*this);
 	}
 
 	Framework::Network::Packet ToPacket(uint32_t opcode = 0)
@@ -98,16 +72,4 @@ public:
 		packet << *this;
 		return std::move(packet);
 	}
-
-private:
-
-	struct Impl
-	{
-		Impl()
-		{
-			head = T();
-		}
-
-		T head;
-	} impl;
 };
