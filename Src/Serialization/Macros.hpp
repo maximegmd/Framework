@@ -12,15 +12,6 @@ struct Accessor1
 	}
 };
 
-template <class A, class Value>
-struct Accessor1<A, Value, typename std::enable_if<std::is_base_of<ISwitchedSerializable, A>::value>::type>
-{
-	static void set(A& a, Value value)
-	{
-		a = value;
-	}
-};
-
 template <class A, class B, class Value, class Enabled = void>
 struct Accessor2
 {

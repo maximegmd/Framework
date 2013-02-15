@@ -15,12 +15,12 @@ struct BasicArray : public std::array<B, A>
 	{
 		assert(l.size() == A);
 		size_t index = 0;
-		for(auto itor = l.begin(), end = l.end(); itor != end; ++itor, ++index)
+		for(auto itor : l)
 		{
 			(*this)[index] = *itor;
+			++index;
 		}
 	}
-
 
 	friend Framework::Network::Packet& operator<<(Framework::Network::Packet& p, BasicArray<A, B>& data)
 	{
