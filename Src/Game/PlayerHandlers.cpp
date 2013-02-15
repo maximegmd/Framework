@@ -53,7 +53,7 @@ namespace Game
 				}
 			}
 		}
-		Framework::System::Log::Print(os.str());
+		//Framework::System::Log::Print(os.str());
 	}
 
 	void Player::HandleAwareness(Framework::Network::Packet& pPacket)

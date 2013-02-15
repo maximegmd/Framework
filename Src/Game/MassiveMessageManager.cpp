@@ -199,6 +199,11 @@ namespace Game
 			else if(localPlayer)
 				localPlayer->ReceivePacket(pPacket);
 		}
+		if(pKey == kPlayerSynchronized)
+		{
+			if(gameServer)
+				gameServer->SendMessageAllSynchronized(pPacket);
+		}
 	}
 
 	void MassiveMessageManager::SendMessageAll(Framework::Network::Packet& pPacket)

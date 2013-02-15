@@ -8,6 +8,7 @@
 namespace Game
 {
 	enum{
+		kPlayerSynchronized = -4,
 		kPlayerSelf = -3,
 		kPlayerServer = -2,
 		kPlayerAll = -1,

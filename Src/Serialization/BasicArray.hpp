@@ -17,7 +17,7 @@ struct BasicArray : public std::array<B, A>
 		size_t index = 0;
 		for(auto itor : l)
 		{
-			(*this)[index] = *itor;
+			(*this)[index] = itor;
 			++index;
 		}
 	}
