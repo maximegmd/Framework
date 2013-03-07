@@ -269,6 +269,8 @@
     <ClCompile Include="Src\Network\SslConnection.cpp" />
     <ClCompile Include="Src\Network\SslServer.cpp" />
     <ClCompile Include="Src\Network\TcpConnection.cpp" />
+    <ClCompile Include="Src\Network\TlsConnection.cpp" />
+    <ClCompile Include="Src\Network\TlsServer.cpp" />
     <ClCompile Include="Src\Reflection\Class.cpp" />
     <ClCompile Include="Src\Serialization\Serialization.cpp" />
     <ClCompile Include="Src\System\DBWorkQueue.cpp" />
@@ -324,6 +326,8 @@
     <ClInclude Include="Src\Network\SslServer.h" />
     <ClInclude Include="Src\Network\Strategy.h" />
     <ClInclude Include="Src\Network\TcpConnection.h" />
+    <ClInclude Include="Src\Network\TlsConnection.h" />
+    <ClInclude Include="Src\Network\TlsServer.h" />
     <ClInclude Include="Src\Reflection\Class.h" />
     <ClInclude Include="Src\Reflection\Function.h" />
     <ClInclude Include="Src\Serialization\BasicArray.hpp" />

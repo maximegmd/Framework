@@ -21,6 +21,9 @@ namespace Game
 
 	Player::~Player()
 	{
+		std::ostringstream os;
+		os << "GameServer : Remove player with key : " << key;
+		Framework::System::Log::Debug(os.str());
 	}
 
 	void Player::SetConnection(Framework::Network::TcpConnection::pointer pConnection)
