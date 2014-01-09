@@ -27,6 +27,8 @@ namespace Framework
 				mSocket.shutdown(boost::asio::socket_base::shutdown_both, e);
 				mSocket.close(e);
 			}
+			mTimeout.cancel();
+
 			OnError("Close");
 
 			OnError.disconnect_all_slots();
